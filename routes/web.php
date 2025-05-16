@@ -18,23 +18,9 @@ Route::get('/dashboard', function () {
     return redirect()->route('teacher.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Admin routes
-Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
-    
-    // Add more admin routes here
-});
-
-// Teacher routes
-Route::middleware(['auth', 'verified', 'role:teacher'])->prefix('teacher')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('teacher.dashboard');
-    })->name('teacher.dashboard');
-    
-    // Add more teacher routes here
-});
+// Include admin and teacher routes
+require __DIR__.'/admin.php';
+require __DIR__.'/teacher.php';
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
