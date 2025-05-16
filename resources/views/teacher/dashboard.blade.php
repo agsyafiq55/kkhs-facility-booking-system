@@ -17,17 +17,29 @@
                         </flux:callout.text>
                     </flux:callout>
 
-                    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-neutral-50 dark:bg-zinc-700 p-6 rounded-lg">
                             <h3 class="text-lg font-semibold mb-2">My Bookings</h3>
                             <p class="text-gray-600 dark:text-neutral-400 mb-4">View and manage your room bookings</p>
-                            <flux:button>View Bookings</flux:button>
+                            <flux:button>
+                                View Bookings
+                                <span class="text-xs ml-1">(Coming Soon)</span>
+                            </flux:button>
                         </div>
 
                         <div class="bg-neutral-50 dark:bg-zinc-700 p-6 rounded-lg">
                             <h3 class="text-lg font-semibold mb-2">New Booking</h3>
                             <p class="text-gray-600 dark:text-neutral-400 mb-4">Book a room for your class</p>
-                            <flux:button variant="primary">Book Now</flux:button>
+                            <flux:button variant="primary">
+                                Book Now
+                                <span class="text-xs ml-1">(Coming Soon)</span>
+                            </flux:button>
+                        </div>
+
+                        <div class="bg-neutral-50 dark:bg-zinc-700 p-6 rounded-lg">
+                            <h3 class="text-lg font-semibold mb-2">Facilities</h3>
+                            <p class="text-gray-600 dark:text-neutral-400 mb-4">Browse available facilities for booking</p>
+                            <flux:button href="{{ route('teacher.facilities.index') }}" wire:navigate>View Facilities</flux:button>
                         </div>
                     </div>
                 </div>
