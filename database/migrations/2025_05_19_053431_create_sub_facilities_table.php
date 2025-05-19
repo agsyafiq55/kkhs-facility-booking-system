@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('facilities', function (Blueprint $table) {
+        Schema::create('sub_facilities', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('facility_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->text('description')->nullable();
             $table->integer('capacity')->nullable();
-            $table->string('status')->default('available'); // available, maintenance, unavailable
+            $table->string('status')->default('available');
             $table->string('image_path')->nullable();
+            $table->boolean('is_bookable')->default(true);
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('facilities');
+        Schema::dropIfExists('sub_facilities');
     }
 };

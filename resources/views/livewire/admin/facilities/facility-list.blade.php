@@ -53,7 +53,7 @@
         @if($facilities->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($facilities as $facility)
-                    <div class="group relative border-neutral-200 bg-zinc-50 dark:bg-zinc-900 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border dark:border-zinc-700"
+                    <div class="group relative border-neutral-200 bg-zinc-50 dark:bg-zinc-900 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border dark:border-zinc-700 cursor-pointer"
                         wire:key="{{ $facility->id }}">
                         
                         <!-- Facility Image -->

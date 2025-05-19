@@ -29,16 +29,6 @@ class EditFacility extends Component
     #[Rule('nullable|image|mimes:jpeg,png,jpg,gif|max:2048')]
     public $image = null;
     
-    #[Rule('nullable|array')]
-    public $features = [];
-    
-    public $availableFeatures = [
-        'projector' => 'Projector',
-        'whiteboard' => 'Whiteboard',
-        'air_conditioning' => 'Air Conditioning',
-        'wifi' => 'WiFi'
-    ];
-    
     public function mount(Facility $facility)
     {
         $this->facility = $facility;
@@ -46,7 +36,6 @@ class EditFacility extends Component
         $this->description = $facility->description;
         $this->capacity = $facility->capacity;
         $this->status = $facility->status;
-        $this->features = $facility->features ?? [];
     }
     
     public function save()

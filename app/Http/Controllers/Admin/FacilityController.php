@@ -37,7 +37,8 @@ class FacilityController extends Controller
             'capacity' => 'nullable|integer|min:1',
             'status' => 'required|string|in:available,maintenance,unavailable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'features' => 'nullable|array',
+            'has_addons' => 'boolean',
+            'has_sub_facilities' => 'boolean',
         ]);
 
         // Handle image upload
@@ -46,7 +47,12 @@ class FacilityController extends Controller
             $validated['image_path'] = $path;
         }
 
-        Facility::create($validated);
+        $facility = Facility::create($validated);
+
+        if ($facility->has_addons || $facility->has_sub_facilities) {
+            return redirect()->route('admin.facilities.show', $facility)
+                ->with('success', 'Facility created successfully. Please set up additional options.');
+        }
 
         return redirect()->route('admin.facilities.index')
             ->with('success', 'Facility created successfully.');
@@ -79,7 +85,8 @@ class FacilityController extends Controller
             'capacity' => 'nullable|integer|min:1',
             'status' => 'required|string|in:available,maintenance,unavailable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'features' => 'nullable|array',
+            'has_addons' => 'boolean',
+            'has_sub_facilities' => 'boolean',
         ]);
 
         // Handle image upload

@@ -23,6 +23,26 @@
                     <flux:badge color="red" class="w-full flex justify-center py-2">Unavailable</flux:badge>
                 @endif
             </div>
+
+            <!-- Additional Facility Options -->
+            <div class="mt-4 bg-neutral-100 dark:bg-zinc-800 rounded-lg p-4">
+                <h3 class="text-lg font-semibold mb-4">Facility Options</h3>
+                
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span>Has Add-ons:</span>
+                        <span class="{{ $facility->has_addons ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                            {{ $facility->has_addons ? 'Yes' : 'No' }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Has Sub-facilities:</span>
+                        <span class="{{ $facility->has_sub_facilities ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                            {{ $facility->has_sub_facilities ? 'Yes' : 'No' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Details -->
@@ -47,22 +67,6 @@
 
             <flux:separator />
 
-            <div>
-                <h3 class="text-lg font-semibold mb-2">Features</h3>
-                
-                @if(is_array($facility->features) && count($facility->features) > 0)
-                    <div class="flex flex-wrap gap-2">
-                        @foreach($facility->features as $feature)
-                            <flux:badge>{{ ucfirst(str_replace('_', ' ', $feature)) }}</flux:badge>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="text-neutral-500 dark:text-neutral-400">No features specified</p>
-                @endif
-            </div>
-
-            <flux:separator />
-
             <div class="flex justify-end space-x-2">
                 <flux:button variant="ghost" href="{{ route('admin.facilities.edit', $facility) }}" wire:navigate>Edit</flux:button>
                 <flux:modal.trigger name="delete-facility">
@@ -71,6 +75,37 @@
             </div>
         </div>
     </div>
+
+    <!-- Addons and Sub-facilities Tabs -->
+    @if($facility->has_addons || $facility->has_sub_facilities)
+        <div class="mt-8">
+            <div class="border-b border-gray-200 dark:border-gray-700">
+                <nav class="flex -mb-px space-x-8" aria-label="Tabs">
+                    @if($facility->has_addons)
+                        <button wire:click="$set('activeTab', 'addons')" class="{{ $activeTab === 'addons' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                            Add-ons
+                        </button>
+                    @endif
+                    
+                    @if($facility->has_sub_facilities)
+                        <button wire:click="$set('activeTab', 'subfacilities')" class="{{ $activeTab === 'subfacilities' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                            Sub-facilities
+                        </button>
+                    @endif
+                </nav>
+            </div>
+            
+            <div class="mt-6">
+                @if($activeTab === 'addons' && $facility->has_addons)
+                    <livewire:admin.facilities.manage-facility-addons :facility="$facility" />
+                @endif
+                
+                @if($activeTab === 'subfacilities' && $facility->has_sub_facilities)
+                    <livewire:admin.facilities.manage-sub-facilities :facility="$facility" />
+                @endif
+            </div>
+        </div>
+    @endif
 
     <!-- Delete Confirmation Modal -->
     <flux:modal name="delete-facility" class="md:w-96">

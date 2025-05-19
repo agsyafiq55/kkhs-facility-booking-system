@@ -34,20 +34,6 @@
             <flux:error name="description" />
         </flux:field>
 
-        <!-- Features -->
-        <flux:field>
-            <flux:label>Features</flux:label>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
-                @foreach($availableFeatures as $value => $label)
-                    <flux:field variant="inline">
-                        <flux:checkbox id="features_{{ $value }}" wire:model.live="features" value="{{ $value }}" />
-                        <flux:label for="features_{{ $value }}">{{ $label }}</flux:label>
-                    </flux:field>
-                @endforeach
-            </div>
-            <flux:error name="features" />
-        </flux:field>
-
         <!-- Current Image -->
         @if($facility->image_path)
             <div class="mb-4">
@@ -73,10 +59,7 @@
         </flux:field>
 
         <div class="flex justify-end">
-            <flux:button variant="primary" type="submit" wire:loading.attr="disabled">
-                <span wire:loading.remove wire:target="save">Update Facility</span>
-                <span wire:loading wire:target="save">Updating...</span>
-            </flux:button>
+            <flux:button type="submit" variant="primary">Update Facility</flux:button>
         </div>
     </form>
 </div>
