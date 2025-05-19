@@ -58,20 +58,14 @@
                             </div>
                             
                             <div class="pt-3">
-                                <div class="flex items-center">
-                                    <div>
-                                        <flux:button as="label" for="image" variant="filled">
-                                            Choose File
-                                            <flux:input type="file" id="image" wire:model="image" class="hidden"/>
-                                        </flux:button>
-                                    </div>
-                                    <span class="ml-3 text-sm text-zinc-500">
-                                        @if($image)
-                                            {{ $image->getClientOriginalName() }}
-                                        @else
-                                            No file chosen
-                                        @endif
-                                    </span>
+                                <div>
+                                    <input type="file" id="image" wire:model="image" class="block w-full text-sm text-neutral-400
+                                        file:mr-4 file:py-2 file:px-4
+                                        file:rounded-md file:border-0
+                                        file:text-sm file:font-semibold
+                                        file:bg-zinc-700 file:text-zinc-300
+                                        hover:file:bg-zinc-600"
+                                        accept="image/png,image/jpeg,image/jpg,image/webp">
                                 </div>
                                 <div wire:loading wire:target="image" class="mt-2 text-sm text-zinc-500">Uploading...</div>
                                 <p class="mt-2 text-xs text-zinc-600">PNG, JPG, WebP - Max 5MB</p>
