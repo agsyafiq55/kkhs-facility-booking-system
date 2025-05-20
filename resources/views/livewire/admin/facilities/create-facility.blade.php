@@ -1,9 +1,7 @@
 <div>
-    <form wire:submit="save" class="space-y-6">
+    <form wire:submit.prevent="save" class="space-y-6">
         <!-- Basic Facility Information -->
         <div class="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow-sm">
-            <flux:legend class="mb-4">Basic Facility Information</flux:legend>
-
             <!-- Desktop Layout: Left Column (Name, Capacity, Status) + Right Column (Image) -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Left Column: Faculty details -->
@@ -37,14 +35,16 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <flux:field>
                             <flux:text for="opening_time">Opening Time</flux:text>
-                            <flux:input id="opening_time" wire:model="opening_time" type="time" />
+                            <flux:input id="opening_time" wire:model="opening_time" type="text" placeholder="9:00 AM" />
                             <flux:error name="opening_time" />
+                            <small class="text-gray-500">Format: 9:00 AM</small>
                         </flux:field>
 
                         <flux:field>
                             <flux:text for="closing_time">Closing Time</flux:text>
-                            <flux:input id="closing_time" wire:model="closing_time" type="time" />
+                            <flux:input id="closing_time" wire:model="closing_time" type="text" placeholder="5:00 PM" />
                             <flux:error name="closing_time" />
+                            <small class="text-gray-500">Format: 5:00 PM</small>
                         </flux:field>
                     </div>
 

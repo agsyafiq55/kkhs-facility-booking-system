@@ -98,37 +98,6 @@
         </div>
     </div>
 
-    <!-- Addons and Sub-facilities Tabs -->
-    @if($facility->has_addons || $facility->has_sub_facilities)
-        <div class="mt-8">
-            <div class="border-b border-gray-200 dark:border-gray-700">
-                <nav class="flex -mb-px space-x-8" aria-label="Tabs">
-                    @if($facility->has_addons)
-                        <button wire:click="$set('activeTab', 'addons')" class="{{ $activeTab === 'addons' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                            Add-ons
-                        </button>
-                    @endif
-                    
-                    @if($facility->has_sub_facilities)
-                        <button wire:click="$set('activeTab', 'subfacilities')" class="{{ $activeTab === 'subfacilities' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                            Sub-facilities
-                        </button>
-                    @endif
-                </nav>
-            </div>
-            
-            <div class="mt-6">
-                @if($activeTab === 'addons' && $facility->has_addons)
-                    <livewire:admin.facilities.manage-facility-addons :facility="$facility" />
-                @endif
-                
-                @if($activeTab === 'subfacilities' && $facility->has_sub_facilities)
-                    <livewire:admin.facilities.manage-sub-facilities :facility="$facility" />
-                @endif
-            </div>
-        </div>
-    @endif
-
     <!-- Delete Confirmation Modal -->
     <flux:modal name="delete-facility" class="md:w-96">
         <div class="space-y-6 p-6">

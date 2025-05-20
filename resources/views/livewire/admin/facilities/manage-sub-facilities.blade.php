@@ -67,21 +67,21 @@
         <div class="space-y-6">
             <flux:heading size="lg">{{ $editing ? 'Edit Sub-facility' : 'Add New Sub-facility' }}</flux:heading>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 gap-4">
                 <flux:field>
-                    <flux:label for="name">Name</flux:label>
+                    <flux:text for="name">Name</flux:text>
                     <flux:input id="name" wire:model="name" required />
                     <flux:error name="name" />
                 </flux:field>
                 
                 <flux:field>
-                    <flux:label for="capacity">Capacity</flux:label>
+                    <flux:text for="capacity">Capacity</flux:text>
                     <flux:input id="capacity" wire:model="capacity" type="number" min="1" />
                     <flux:error name="capacity" />
                 </flux:field>
                 
                 <flux:field>
-                    <flux:label for="status">Status</flux:label>
+                    <flux:text for="status">Status</flux:text>
                     <flux:select id="status" wire:model="status">
                         <flux:select.option value="available">Available</flux:select.option>
                         <flux:select.option value="maintenance">Maintenance</flux:select.option>
@@ -89,16 +89,19 @@
                     </flux:select>
                     <flux:error name="status" />
                 </flux:field>
+
+                <flux:separator variant="subtle" />
                 
                 <flux:field variant="inline">
-                    <flux:label for="is_bookable">Bookable</flux:label>
-                    <flux:switch id="is_bookable" wire:model="is_bookable" />
+                    <flux:switch wire:model.live="is_bookable" label="Bookable" description="Allow bookings for this sub-facility." />
                     <flux:error name="is_bookable" />
                 </flux:field>
+
+                <flux:separator variant="subtle" />
             </div>
             
             <flux:field>
-                <flux:label for="description">Description</flux:label>
+                <flux:text for="description">Description</flux:text>
                 <flux:textarea id="description" wire:model="description" rows="3"></flux:textarea>
                 <flux:error name="description" />
             </flux:field>

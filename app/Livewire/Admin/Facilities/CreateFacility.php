@@ -9,6 +9,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Rule;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class CreateFacility extends Component
 {
@@ -36,10 +37,7 @@ class CreateFacility extends Component
     #[Rule('boolean')]
     public $has_sub_facilities = false;
     
-    #[Rule('nullable|date_format:H:i')]
     public $opening_time = null;
-    
-    #[Rule('nullable|date_format:H:i')]
     public $closing_time = null;
     
     // Add-ons management
@@ -206,9 +204,28 @@ class CreateFacility extends Component
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'has_addons' => 'boolean',
             'has_sub_facilities' => 'boolean',
-            'opening_time' => 'nullable|date_format:H:i',
-            'closing_time' => 'nullable|date_format:H:i',
+            'opening_time' => 'nullable|string',
+            'closing_time' => 'nullable|string',
         ]);
+        
+        // Convert 12-hour format to 24-hour format for database storage
+        if (!empty($validated['opening_time'])) {
+            try {
+                $validated['opening_time'] = Carbon::parse($validated['opening_time'])->format('H:i');
+            } catch (\Exception $e) {
+                session()->flash('error', 'Invalid opening time format. Please use format like "9:30 AM".');
+                return null;
+            }
+        }
+        
+        if (!empty($validated['closing_time'])) {
+            try {
+                $validated['closing_time'] = Carbon::parse($validated['closing_time'])->format('H:i');
+            } catch (\Exception $e) {
+                session()->flash('error', 'Invalid closing time format. Please use format like "5:00 PM".');
+                return null;
+            }
+        }
         
         if ($this->image) {
             $validated['image_path'] = $this->image->store('facilities', 'public');

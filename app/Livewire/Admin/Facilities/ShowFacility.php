@@ -9,16 +9,10 @@ use Illuminate\Support\Facades\Storage;
 class ShowFacility extends Component
 {
     public Facility $facility;
-    public $activeTab = 'addons';
     
     public function mount(Facility $facility)
     {
         $this->facility = $facility;
-        
-        // Set default active tab based on availability
-        if (!$facility->has_addons && $facility->has_sub_facilities) {
-            $this->activeTab = 'subfacilities';
-        }
     }
     
     public function deleteFacility()

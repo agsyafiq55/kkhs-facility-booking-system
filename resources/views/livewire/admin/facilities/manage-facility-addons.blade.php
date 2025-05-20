@@ -42,7 +42,9 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex space-x-2">
                                     <flux:button variant="subtle" wire:click="editAddon({{ $addon->id }})">Edit</flux:button>
-                                    <flux:button variant="danger" wire:click="$dispatch('confirm-delete', { id: {{ $addon->id }}, type: 'addon', action: 'delete-addon' })">Delete</flux:button>
+                                    <flux:modal.trigger name="delete-addon-{{ $addon->id }}">
+                                        <flux:button variant="danger">Delete</flux:button>
+                                    </flux:modal.trigger>
                                 </div>
                             </td>
                         </tr>
@@ -94,4 +96,30 @@
             </div>
         </div>
     </flux:modal>
+
+    <!-- Delete Confirmation Modals -->
+    @foreach ($addons as $addon)
+        <flux:modal name="delete-addon-{{ $addon->id }}" class="md:w-96">
+            <div class="space-y-6 p-6">
+                <div>
+                    <flux:heading size="lg">Delete Add-on?</flux:heading>
+                    <flux:text class="mt-2">
+                        <p>You're about to delete <strong>{{ $addon->name }}</strong>.</p>
+                        <p>This action cannot be undone.</p>
+                    </flux:text>
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <flux:modal.close>
+                        <flux:button variant="ghost">Cancel</flux:button>
+                    </flux:modal.close>
+
+                    <flux:button variant="danger" wire:click="deleteAddon({{ $addon->id }})" wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="deleteAddon">Delete Add-on</span>
+                        <span wire:loading wire:target="deleteAddon">Deleting...</span>
+                    </flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endforeach
 </div>

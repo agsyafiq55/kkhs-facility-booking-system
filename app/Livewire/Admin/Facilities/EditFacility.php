@@ -7,12 +7,14 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Rule;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class EditFacility extends Component
 {
     use WithFileUploads;
     
     public Facility $facility;
+    public $activeTab = 'addons';
     
     #[Rule('required|string|max:255')]
     public $name = '';
@@ -29,10 +31,7 @@ class EditFacility extends Component
     #[Rule('nullable|image|mimes:jpeg,png,jpg,gif|max:2048')]
     public $image = null;
     
-    #[Rule('nullable|date_format:H:i')]
     public $opening_time = null;
-    
-    #[Rule('nullable|date_format:H:i')]
     public $closing_time = null;
     
     public function mount(Facility $facility)
@@ -42,8 +41,20 @@ class EditFacility extends Component
         $this->description = $facility->description;
         $this->capacity = $facility->capacity;
         $this->status = $facility->status;
-        $this->opening_time = $facility->opening_time;
-        $this->closing_time = $facility->closing_time;
+        
+        // Format times to display in 12-hour format if they exist
+        if ($facility->opening_time) {
+            $this->opening_time = Carbon::parse($facility->opening_time)->format('g:i A');
+        }
+        
+        if ($facility->closing_time) {
+            $this->closing_time = Carbon::parse($facility->closing_time)->format('g:i A');
+        }
+        
+        // Set default active tab based on availability
+        if (!$facility->has_addons && $facility->has_sub_facilities) {
+            $this->activeTab = 'subfacilities';
+        }
     }
     
     public function save()
@@ -54,9 +65,28 @@ class EditFacility extends Component
             'capacity' => 'nullable|integer|min:1',
             'status' => 'required|string|in:available,maintenance,unavailable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'opening_time' => 'nullable|date_format:H:i',
-            'closing_time' => 'nullable|date_format:H:i',
+            'opening_time' => 'nullable|string',
+            'closing_time' => 'nullable|string',
         ]);
+        
+        // Convert 12-hour format to 24-hour format for database storage
+        if (!empty($validated['opening_time'])) {
+            try {
+                $validated['opening_time'] = Carbon::parse($validated['opening_time'])->format('H:i');
+            } catch (\Exception $e) {
+                session()->flash('error', 'Invalid opening time format. Please use format like "9:30 AM".');
+                return null;
+            }
+        }
+        
+        if (!empty($validated['closing_time'])) {
+            try {
+                $validated['closing_time'] = Carbon::parse($validated['closing_time'])->format('H:i');
+            } catch (\Exception $e) {
+                session()->flash('error', 'Invalid closing time format. Please use format like "5:00 PM".');
+                return null;
+            }
+        }
         
         if ($this->image) {
             // Delete old image if exists
