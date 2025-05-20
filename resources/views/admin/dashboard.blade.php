@@ -17,7 +17,7 @@
                         </flux:callout.text>
                     </flux:callout>
 
-                    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div class="bg-neutral-50 dark:bg-zinc-700 p-6 rounded-lg">
                             <h3 class="text-lg font-semibold mb-2">User Management</h3>
                             <p class="text-gray-600 dark:text-neutral-400 mb-4">Manage teachers and administrators</p>
@@ -28,6 +28,12 @@
                             <h3 class="text-lg font-semibold mb-2">Facility Management</h3>
                             <p class="text-gray-600 dark:text-neutral-400 mb-4">Manage all bookable facilities</p>
                             <flux:button href="{{ route('admin.facilities.index') }}">Manage Facilities</flux:button>
+                        </div>
+                        
+                        <div class="bg-neutral-50 dark:bg-zinc-700 p-6 rounded-lg">
+                            <h3 class="text-lg font-semibold mb-2">Booking Management</h3>
+                            <p class="text-gray-600 dark:text-neutral-400 mb-4">Review and manage facility bookings</p>
+                            <flux:button href="{{ route('admin.bookings.index') }}">Manage Bookings</flux:button>
                         </div>
 
                         <div class="bg-neutral-50 dark:bg-zinc-700 p-6 rounded-lg">
