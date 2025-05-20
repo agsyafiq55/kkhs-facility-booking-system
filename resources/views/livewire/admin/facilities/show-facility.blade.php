@@ -139,6 +139,59 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Booking Section -->
+        @if($facility->status === 'available')
+            @if(!$facility->has_sub_facilities)
+                <livewire:facility-booking :facility="$facility" />
+            @else
+                <div class="mt-6 bg-white dark:bg-zinc-900 rounded-lg shadow p-4">
+                    <flux:heading size="lg" class="mb-4">Book Sub-facilities</flux:heading>
+                    <flux:callout icon="information-circle">
+                        <flux:callout.text>
+                            This facility has sub-facilities that can be booked individually. Please select a sub-facility to book.
+                        </flux:callout.text>
+                    </flux:callout>
+                    
+                    @if(isset($facility->subFacilities) && count($facility->subFacilities) > 0)
+                        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            @foreach($facility->subFacilities as $subFacility)
+                                <div class="border rounded-lg p-4 {{ $subFacility->status !== 'available' ? 'opacity-50' : '' }}">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <flux:heading size="sm">{{ $subFacility->name }}</flux:heading>
+                                        <flux:badge color="{{ $subFacility->status === 'available' ? 'lime' : ($subFacility->status === 'maintenance' ? 'amber' : 'red') }}">
+                                            {{ ucfirst($subFacility->status) }}
+                                        </flux:badge>
+                                    </div>
+                                    
+                                    @if($subFacility->status === 'available')
+                                        <flux:modal.trigger name="book-subfacility-{{ $subFacility->id }}">
+                                            <flux:button variant="primary" class="w-full mt-2">Book Now</flux:button>
+                                        </flux:modal.trigger>
+                                        
+                                        <flux:modal name="book-subfacility-{{ $subFacility->id }}" class="max-w-4xl">
+                                            <flux:heading size="lg" class="mb-4">Book {{ $subFacility->name }}</flux:heading>
+                                            <livewire:facility-booking :facility="$facility" :subFacility="$subFacility" wire:key="booking-{{ $subFacility->id }}" />
+                                        </flux:modal>
+                                    @else
+                                        <flux:button disabled class="w-full mt-2 opacity-50 cursor-not-allowed">Not Available</flux:button>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            @endif
+        @else
+            <div class="mt-6 bg-white dark:bg-zinc-900 rounded-lg shadow p-4">
+                <flux:callout icon="exclamation-triangle">
+                    <flux:callout.heading>Facility Not Available</flux:callout.heading>
+                    <flux:callout.text>
+                        This facility is currently not available for booking.
+                    </flux:callout.text>
+                </flux:callout>
+            </div>
+        @endif
     </div>
 
     <!-- Delete Confirmation Modal -->
