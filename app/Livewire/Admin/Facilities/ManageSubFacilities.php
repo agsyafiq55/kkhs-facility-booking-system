@@ -8,7 +8,6 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Rule;
-use Livewire\Attributes\On;
 use Illuminate\Support\Facades\Storage;
 
 class ManageSubFacilities extends Component
@@ -91,7 +90,6 @@ class ManageSubFacilities extends Component
         ]);
     }
     
-    #[On('delete-sub-facility')]
     public function deleteSubFacility(SubFacility $subFacility)
     {
         if ($subFacility->image_path && Storage::disk('public')->exists($subFacility->image_path)) {

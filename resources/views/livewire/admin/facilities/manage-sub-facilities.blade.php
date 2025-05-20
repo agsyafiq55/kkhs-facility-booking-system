@@ -50,7 +50,9 @@
                         
                         <div class="mt-4 flex space-x-2">
                             <flux:button variant="subtle" wire:click="editSubFacility({{ $subFacility->id }})">Edit</flux:button>
-                            <flux:button variant="danger" wire:click="$dispatch('confirm-delete', { id: {{ $subFacility->id }}, type: 'sub-facility', action: 'delete-sub-facility' })">Delete</flux:button>
+                            <flux:modal.trigger name="delete-subfacility-{{ $subFacility->id }}">
+                                <flux:button variant="danger">Delete</flux:button>
+                            </flux:modal.trigger>
                         </div>
                     </div>
                 </div>
@@ -69,19 +71,19 @@
             
             <div class="grid grid-cols-1 gap-4">
                 <flux:field>
-                    <flux:text for="name">Name</flux:text>
+                    <flux:label for="name">Name</flux:label>
                     <flux:input id="name" wire:model="name" required />
                     <flux:error name="name" />
                 </flux:field>
                 
                 <flux:field>
-                    <flux:text for="capacity">Capacity</flux:text>
+                    <flux:label for="capacity">Capacity</flux:label>
                     <flux:input id="capacity" wire:model="capacity" type="number" min="1" />
                     <flux:error name="capacity" />
                 </flux:field>
                 
                 <flux:field>
-                    <flux:text for="status">Status</flux:text>
+                    <flux:label for="status">Status</flux:label>
                     <flux:select id="status" wire:model="status">
                         <flux:select.option value="available">Available</flux:select.option>
                         <flux:select.option value="maintenance">Maintenance</flux:select.option>
@@ -93,7 +95,9 @@
                 <flux:separator variant="subtle" />
                 
                 <flux:field variant="inline">
-                    <flux:switch wire:model.live="is_bookable" label="Bookable" description="Allow bookings for this sub-facility." />
+                    <flux:label for="is_bookable">Bookable</flux:label>
+                    <flux:switch id="is_bookable" wire:model="is_bookable" />
+                    <flux:description>Allow bookings for this sub-facility.</flux:description>
                     <flux:error name="is_bookable" />
                 </flux:field>
 
@@ -101,7 +105,7 @@
             </div>
             
             <flux:field>
-                <flux:text for="description">Description</flux:text>
+                <flux:label for="description">Description</flux:label>
                 <flux:textarea id="description" wire:model="description" rows="3"></flux:textarea>
                 <flux:error name="description" />
             </flux:field>
@@ -128,4 +132,30 @@
             </div>
         </div>
     </flux:modal>
+    
+    <!-- Delete Confirmation Modals -->
+    @foreach ($subFacilities as $subFacility)
+        <flux:modal name="delete-subfacility-{{ $subFacility->id }}" class="md:w-96">
+            <div class="space-y-6 p-6">
+                <div>
+                    <flux:heading size="lg">Delete Sub-facility?</flux:heading>
+                    <flux:text class="mt-2">
+                        <p>You're about to delete <strong>{{ $subFacility->name }}</strong>.</p>
+                        <p>This action cannot be undone.</p>
+                    </flux:text>
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <flux:modal.close>
+                        <flux:button variant="ghost">Cancel</flux:button>
+                    </flux:modal.close>
+
+                    <flux:button variant="danger" wire:click="deleteSubFacility({{ $subFacility->id }})" wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="deleteSubFacility">Delete Sub-facility</span>
+                        <span wire:loading wire:target="deleteSubFacility">Deleting...</span>
+                    </flux:button>
+                </div>
+            </div>
+        </flux:modal>
+    @endforeach
 </div>
