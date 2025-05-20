@@ -39,6 +39,8 @@ class FacilityController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'has_addons' => 'boolean',
             'has_sub_facilities' => 'boolean',
+            'opening_time' => 'nullable|date_format:H:i',
+            'closing_time' => 'nullable|date_format:H:i',
         ]);
 
         // Handle image upload
@@ -87,6 +89,8 @@ class FacilityController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'has_addons' => 'boolean',
             'has_sub_facilities' => 'boolean',
+            'opening_time' => 'nullable|date_format:H:i',
+            'closing_time' => 'nullable|date_format:H:i',
         ]);
 
         // Handle image upload

@@ -56,6 +56,28 @@
                         <p class="mt-1">{{ $facility->capacity ?? 'Not specified' }}</p>
                     </div>
                 </div>
+                
+                <!-- Opening Hours -->
+                @if($facility->opening_time || $facility->closing_time)
+                <div class="mt-4">
+                    <h3 class="text-sm font-medium text-neutral-500 dark:text-neutral-400">Operating Hours</h3>
+                    <div class="flex space-x-2 mt-1">
+                        <div>
+                            @if($facility->opening_time)
+                                {{ \Carbon\Carbon::parse($facility->opening_time)->format('h:i A') }}
+                            @else
+                                N/A 
+                            @endif
+                            -
+                            @if($facility->closing_time)
+                                {{ \Carbon\Carbon::parse($facility->closing_time)->format('h:i A') }}
+                            @else
+                                N/A
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
 
             <flux:separator />

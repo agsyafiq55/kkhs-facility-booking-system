@@ -36,6 +36,12 @@ class CreateFacility extends Component
     #[Rule('boolean')]
     public $has_sub_facilities = false;
     
+    #[Rule('nullable|date_format:H:i')]
+    public $opening_time = null;
+    
+    #[Rule('nullable|date_format:H:i')]
+    public $closing_time = null;
+    
     // Add-ons management
     public $addons = [];
     public $addonName = '';
@@ -200,6 +206,8 @@ class CreateFacility extends Component
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'has_addons' => 'boolean',
             'has_sub_facilities' => 'boolean',
+            'opening_time' => 'nullable|date_format:H:i',
+            'closing_time' => 'nullable|date_format:H:i',
         ]);
         
         if ($this->image) {

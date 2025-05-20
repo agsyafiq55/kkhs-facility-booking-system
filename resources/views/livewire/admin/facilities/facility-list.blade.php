@@ -92,6 +92,23 @@
                                 <span class="font-medium">Capacity:</span> {{ $facility->capacity ?? 'Not specified' }}
                             </div>
                             
+                            @if($facility->opening_time || $facility->closing_time)
+                            <div class="text-neutral-600 dark:text-neutral-400 text-sm mb-2">
+                                <span class="font-medium">Hours:</span> 
+                                @if($facility->opening_time)
+                                    {{ \Carbon\Carbon::parse($facility->opening_time)->format('h:i A') }}
+                                @else
+                                    N/A
+                                @endif
+                                -
+                                @if($facility->closing_time)
+                                    {{ \Carbon\Carbon::parse($facility->closing_time)->format('h:i A') }}
+                                @else
+                                    N/A
+                                @endif
+                            </div>
+                            @endif
+                            
                             <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
                                 {{ $facility->description ?? 'No description available.' }}
                             </p>

@@ -27,6 +27,21 @@
             </flux:field>
         </div>
 
+        <!-- Opening/Closing Time -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <flux:field>
+                <flux:label for="opening_time">Opening Time</flux:label>
+                <flux:input id="opening_time" wire:model="opening_time" type="time" />
+                <flux:error name="opening_time" />
+            </flux:field>
+
+            <flux:field>
+                <flux:label for="closing_time">Closing Time</flux:label>
+                <flux:input id="closing_time" wire:model="closing_time" type="time" />
+                <flux:error name="closing_time" />
+            </flux:field>
+        </div>
+
         <!-- Description -->
         <flux:field>
             <flux:label for="description">Description</flux:label>

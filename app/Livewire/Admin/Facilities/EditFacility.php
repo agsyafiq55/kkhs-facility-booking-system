@@ -29,6 +29,12 @@ class EditFacility extends Component
     #[Rule('nullable|image|mimes:jpeg,png,jpg,gif|max:2048')]
     public $image = null;
     
+    #[Rule('nullable|date_format:H:i')]
+    public $opening_time = null;
+    
+    #[Rule('nullable|date_format:H:i')]
+    public $closing_time = null;
+    
     public function mount(Facility $facility)
     {
         $this->facility = $facility;
@@ -36,11 +42,21 @@ class EditFacility extends Component
         $this->description = $facility->description;
         $this->capacity = $facility->capacity;
         $this->status = $facility->status;
+        $this->opening_time = $facility->opening_time;
+        $this->closing_time = $facility->closing_time;
     }
     
     public function save()
     {
-        $validated = $this->validate();
+        $validated = $this->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'capacity' => 'nullable|integer|min:1',
+            'status' => 'required|string|in:available,maintenance,unavailable',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'opening_time' => 'nullable|date_format:H:i',
+            'closing_time' => 'nullable|date_format:H:i',
+        ]);
         
         if ($this->image) {
             // Delete old image if exists

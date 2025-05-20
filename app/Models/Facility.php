@@ -18,6 +18,8 @@ class Facility extends Model
         'image_path',
         'has_addons',
         'has_sub_facilities',
+        'opening_time',
+        'closing_time',
     ];
     
     protected $casts = [

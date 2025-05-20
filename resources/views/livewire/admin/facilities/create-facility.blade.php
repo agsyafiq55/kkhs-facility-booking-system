@@ -33,6 +33,21 @@
                         <flux:error name="status" />
                     </flux:field>
 
+                    <!-- Opening/Closing Time -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <flux:field>
+                            <flux:text for="opening_time">Opening Time</flux:text>
+                            <flux:input id="opening_time" wire:model="opening_time" type="time" />
+                            <flux:error name="opening_time" />
+                        </flux:field>
+
+                        <flux:field>
+                            <flux:text for="closing_time">Closing Time</flux:text>
+                            <flux:input id="closing_time" wire:model="closing_time" type="time" />
+                            <flux:error name="closing_time" />
+                        </flux:field>
+                    </div>
+
                     <!-- Description -->
                     <flux:field>
                         <flux:text for="description">Description</flux:text>
