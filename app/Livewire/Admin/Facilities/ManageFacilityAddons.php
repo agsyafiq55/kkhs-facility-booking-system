@@ -23,9 +23,6 @@ class ManageFacilityAddons extends Component
     #[Rule('nullable|string')]
     public $description = '';
     
-    #[Rule('required|numeric|min:0')]
-    public $price = 0;
-    
     #[Rule('boolean')]
     public $is_available = true;
     
@@ -53,7 +50,6 @@ class ManageFacilityAddons extends Component
         $this->editing = $addon;
         $this->name = $addon->name;
         $this->description = $addon->description;
-        $this->price = $addon->price;
         $this->is_available = $addon->is_available;
         $this->quantity_available = $addon->quantity_available;
         $this->isModalOpen = true;
