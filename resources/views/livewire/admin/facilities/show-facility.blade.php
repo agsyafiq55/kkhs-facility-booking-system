@@ -1,33 +1,128 @@
 <div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Image and Basic Info -->
-        <div class="md:col-span-1">
-            @if($facility->image_path)
-                <div class="mb-6">
-                    <img src="{{ asset('storage/' . $facility->image_path) }}" alt="{{ $facility->name }}" class="w-full h-auto rounded-lg">
-                </div>
-            @else
-                <div class="mb-6 bg-neutral-200 dark:bg-neutral-700 rounded-lg h-48 flex items-center justify-center">
+    <div class="bg-neutral-100 dark:bg-zinc-800 rounded-lg p-6">
+        <!-- Header with Edit/Delete buttons -->
+        <div class="flex justify-between items-center mb-6">
+            <div></div>
+            <div class="flex space-x-2">
+                <flux:button href="{{ route('admin.facilities.edit', $facility) }}" wire:navigate>Edit</flux:button>
+                <flux:modal.trigger name="delete-facility">
+                    <flux:button variant="danger">Delete</flux:button>
+                </flux:modal.trigger>
+            </div>
+        </div>
+
+        <!-- Main content grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left column - Facility image -->
+            <div class="rounded-md shadow flex items-center justify-center h-full">
+                @if($facility->image_path)
+                <img src="{{ asset('storage/' . $facility->image_path) }}" alt="{{ $facility->name }}" class="w-full h-full object-cover rounded-md">
+                @else
+                <div class="bg-neutral-200 dark:bg-neutral-700 rounded-md h-full w-full flex items-center justify-center">
                     <span class="text-neutral-500 dark:text-neutral-400">No image available</span>
                 </div>
-            @endif
-
-            <div class="bg-neutral-100 dark:bg-zinc-800 rounded-lg p-4">
-                <h3 class="text-lg font-semibold mb-4">Facility Status</h3>
-                
-                @if($facility->status === 'available')
-                    <flux:badge color="lime" class="w-full flex justify-center py-2">Available</flux:badge>
-                @elseif($facility->status === 'maintenance')
-                    <flux:badge color="amber" class="w-full flex justify-center py-2">Maintenance</flux:badge>
-                @else
-                    <flux:badge color="red" class="w-full flex justify-center py-2">Unavailable</flux:badge>
                 @endif
             </div>
 
-            <!-- Additional Facility Options -->
-            <div class="mt-4 bg-neutral-100 dark:bg-zinc-800 rounded-lg p-4">
-                <h3 class="text-lg font-semibold mb-4">Facility Options</h3>
+            <!-- Right column - Facility details -->
+            <div class="space-y-4">
+                <div>
+                    <flux:heading size="xl" class="font-semibold">{{ $facility->name }}</flux:heading>
+                </div>
+
+                <div>
+                    <flux:heading size="lg">Capacity</flux:heading>
+                    <flux:text>{{ $facility->capacity ?? 'Not specified' }}</flux:text>
+                </div>
+
+                <div>
+                    <flux:heading size="lg">Operating Hours</flux:heading>
+                    <flux:text>
+                        @if($facility->opening_time && $facility->closing_time)
+                        {{ \Carbon\Carbon::parse($facility->opening_time)->format('h:i A') }} -
+                        {{ \Carbon\Carbon::parse($facility->closing_time)->format('h:i A') }}
+                        @else
+                        Not specified
+                        @endif
+                    </flux:text>
+                </div>
+
+                <div>
+                    <flux:heading size="lg">Facility Status</flux:heading>
+                    @if($facility->status === 'available')
+                    <flux:badge color="lime">Available</flux:badge>
+                    @elseif($facility->status === 'maintenance')
+                    <flux:badge color="amber">Maintenance</flux:badge>
+                    @else
+                    <flux:badge color="red">Unavailable</flux:badge>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- Description section -->
+        <div class="mt-6 bg-white dark:bg-zinc-900 rounded-lg shadow p-3">
+            <flux:heading size="lg" class="font-semibold">Description</flux:heading>
+            <flux:text class="mt-2 text-justify">{{ $facility->description ?? 'No description available.' }}</flux:text>
+        </div>
+
+        <!-- Facility Add-ons and Sub-facilities -->
+        @if($facility->has_addons || $facility->has_sub_facilities)
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            @if($facility->has_addons)
+            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow p-3">
+                <flux:heading size="lg" class="font-semibold">Available Add-ons</flux:heading>
                 
+                @if(isset($facility->addons) && count($facility->addons) > 0)
+                <ul class="mt-2 space-y-2">
+                    @foreach($facility->addons as $addon)
+                    <li class="flex items-center justify-between">
+                        <flux:text>{{ $addon->name }}</flux:text>
+                    </li>
+                    @endforeach
+                </ul>
+                @else
+                <flux:callout icon="information-circle" class="mt-2">
+                    <flux:callout.text>
+                        Add-ons coming soon!
+                    </flux:callout.text>
+                </flux:callout>
+                @endif
+            </div>
+            @endif
+
+            @if($facility->has_sub_facilities)
+            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow p-3">
+                <flux:heading size="lg" class="font-semibold">Sub-facilities</flux:heading>
+                
+                @if(isset($facility->subFacilities) && count($facility->subFacilities) > 0)
+                <ul class="mt-2 space-y-2">
+                    @foreach($facility->subFacilities as $subFacility)
+                    <li class="flex items-center justify-between">
+                        <flux:text>{{ $subFacility->name }}</flux:text>
+                        <flux:badge color="{{ $subFacility->status === 'available' ? 'lime' : ($subFacility->status === 'maintenance' ? 'amber' : 'red') }}">
+                            {{ ucfirst($subFacility->status) }}
+                        </flux:badge>
+                    </li>
+                    @endforeach
+                </ul>
+                @else
+                <flux:callout icon="information-circle" class="mt-2">
+                    <flux:callout.text>
+                        Sub-facilities coming soon!
+                    </flux:callout.text>
+                </flux:callout>
+                @endif
+            </div>
+            @endif
+        </div>
+        @endif
+
+        <!-- Additional Facility Options -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow p-3">
+                <flux:heading size="lg" class="font-semibold mb-2">Facility Options</flux:heading>
+
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
                         <span>Has Add-ons:</span>
@@ -44,81 +139,26 @@
                 </div>
             </div>
         </div>
-
-        <!-- Details -->
-        <div class="md:col-span-2 space-y-6">
-            <div>
-                <h2 class="text-2xl font-bold">{{ $facility->name }}</h2>
-                
-                <div class="mt-4">
-                    <div>
-                        <h3 class="text-sm font-medium text-neutral-500 dark:text-neutral-400">Capacity</h3>
-                        <p class="mt-1">{{ $facility->capacity ?? 'Not specified' }}</p>
-                    </div>
-                </div>
-                
-                <!-- Opening Hours -->
-                @if($facility->opening_time || $facility->closing_time)
-                <div class="mt-4">
-                    <h3 class="text-sm font-medium text-neutral-500 dark:text-neutral-400">Operating Hours</h3>
-                    <div class="flex space-x-2 mt-1">
-                        <div>
-                            @if($facility->opening_time)
-                                {{ \Carbon\Carbon::parse($facility->opening_time)->format('h:i A') }}
-                            @else
-                                N/A 
-                            @endif
-                            -
-                            @if($facility->closing_time)
-                                {{ \Carbon\Carbon::parse($facility->closing_time)->format('h:i A') }}
-                            @else
-                                N/A
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                @endif
-            </div>
-
-            <flux:separator />
-
-            <div>
-                <h3 class="text-lg font-semibold mb-2">Description</h3>
-                <p class="text-neutral-600 dark:text-neutral-300">{{ $facility->description ?? 'No description available.' }}</p>
-            </div>
-
-            <flux:separator />
-
-            <div class="flex justify-end space-x-2">
-                <flux:button variant="ghost" href="{{ route('admin.facilities.edit', $facility) }}" wire:navigate>Edit</flux:button>
-                <flux:modal.trigger name="delete-facility">
-                    <flux:button variant="danger">Delete Facility</flux:button>
-                </flux:modal.trigger>
-            </div>
-        </div>
     </div>
 
     <!-- Delete Confirmation Modal -->
     <flux:modal name="delete-facility" class="md:w-96">
-        <div class="space-y-6 p-6">
-            <div>
-                <flux:heading size="lg">Delete Facility?</flux:heading>
-                <flux:text class="mt-2">
-                    <p>You're about to delete <strong>{{ $facility->name }}</strong>.</p>
-                    <p>This action cannot be undone.</p>
-                </flux:text>
-            </div>
+        <div class="py-2">
+            <flux:heading size="lg">Delete Facility?</flux:heading>
+            <flux:text class="mt-2">
+                <p>You're about to delete <strong>{{ $facility->name }}</strong>. This action cannot be undone.</p>
+            </flux:text>
+        </div>
 
-            <div class="flex justify-end gap-2">
-                <flux:modal.close>
-                    <flux:button variant="ghost">Cancel</flux:button>
-                </flux:modal.close>
+        <div class="flex justify-end gap-2">
+            <flux:modal.close>
+                <flux:button variant="ghost">Cancel</flux:button>
+            </flux:modal.close>
 
-                <flux:button variant="danger" wire:click="deleteFacility" wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="deleteFacility">Delete Facility</span>
-                    <span wire:loading wire:target="deleteFacility">Deleting...</span>
-                </flux:button>
-            </div>
+            <flux:button variant="danger" wire:click="deleteFacility" wire:loading.attr="disabled">
+                <span wire:loading.remove wire:target="deleteFacility">Delete Facility</span>
+                <span wire:loading wire:target="deleteFacility">Deleting...</span>
+            </flux:button>
         </div>
     </flux:modal>
 </div>
