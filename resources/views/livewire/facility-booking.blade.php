@@ -1,11 +1,22 @@
 <div>
     <div class="bg-white dark:bg-zinc-900 rounded-lg shadow p-4 mt-6">
-        <flux:heading size="lg" class="mb-4">Book This Facility</flux:heading>
+        <flux:heading size="lg" class="mb-4">
+            Book {{ $subFacility ? $subFacility->name : 'This Facility' }}
+        </flux:heading>
 
         @if (session()->has('message'))
             <flux:callout icon="check-circle" class="mb-4">
                 <flux:callout.text>
                     {{ session('message') }}
+                </flux:callout.text>
+            </flux:callout>
+        @endif
+
+        <!-- Debug info - remove in production -->
+        @if($debug)
+            <flux:callout icon="information-circle" class="mb-4">
+                <flux:callout.text>
+                    {{ $debug }}
                 </flux:callout.text>
             </flux:callout>
         @endif

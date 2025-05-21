@@ -17,6 +17,7 @@ class FacilityBooking extends Component
     public array $selectedTimeSlots = [];
     public array $availableTimeSlots = [];
     public string $notes = '';
+    public ?string $debug = null;
     
     protected $rules = [
         'selectedDate' => 'required|date|after_or_equal:today',
@@ -45,58 +46,133 @@ class FacilityBooking extends Component
             // but check bookings specific to this sub-facility
             $parentFacility = $this->facility;
             
-            // Generate all possible time slots based on parent facility's opening and closing times
-            $openingTime = \Carbon\Carbon::parse($parentFacility->opening_time);
-            $closingTime = \Carbon\Carbon::parse($parentFacility->closing_time);
-            
-            $timeSlots = [];
-            $currentSlot = clone $openingTime;
-            
-            while ($currentSlot->lt($closingTime)) {
-                $slotEnd = (clone $currentSlot)->addHour();
-                
-                if ($slotEnd->gt($closingTime)) {
-                    $slotEnd = clone $closingTime;
+            try {
+                // Set default times if not available
+                $openingTime = $parentFacility->opening_time 
+                    ? Carbon::parse($parentFacility->opening_time) 
+                    : Carbon::parse('08:00:00');
+                    
+                $closingTime = $parentFacility->closing_time 
+                    ? Carbon::parse($parentFacility->closing_time) 
+                    : Carbon::parse('17:00:00');
+                    
+                // Special handling for midnight (00:00) - treat it as 24:00
+                if ($closingTime->format('H:i') === '00:00') {
+                    $closingTime = Carbon::parse('23:59:59');
                 }
                 
-                $timeSlots[] = [
-                    'start' => $currentSlot->format('H:i'),
-                    'end' => $slotEnd->format('H:i'),
-                    'formatted' => $currentSlot->format('g:i A') . ' - ' . $slotEnd->format('g:i A'),
-                    'available' => true,
-                ];
+                // Make sure closing time is after opening time
+                if ($closingTime->lte($openingTime)) {
+                    // If closing time is before or equal to opening time, set it to 8 hours after opening time
+                    $closingTime = (clone $openingTime)->addHours(8);
+                }
                 
-                $currentSlot->addHour();
-            }
-            
-            // Check which slots are booked for this sub-facility
-            $bookings = Booking::where('date', $this->selectedDate)
-                ->where('sub_facility_id', $this->subFacility->id)
-                ->get();
-            
-            foreach ($bookings as $booking) {
-                $bookingStart = \Carbon\Carbon::parse($booking->start_time);
-                $bookingEnd = \Carbon\Carbon::parse($booking->end_time);
+                // Debug information 
+                $this->debug = "Sub-facility booking: {$this->subFacility->id} - {$this->subFacility->name}\n";
+                $this->debug .= "Parent Facility: {$parentFacility->id} - {$parentFacility->name}\n";
+                $this->debug .= "Opening: {$openingTime->format('H:i')}, Closing: {$closingTime->format('H:i')}";
                 
-                foreach ($timeSlots as &$slot) {
-                    $slotStart = \Carbon\Carbon::parse($slot['start']);
-                    $slotEnd = \Carbon\Carbon::parse($slot['end']);
+                $timeSlots = [];
+                $currentSlot = clone $openingTime;
+                
+                while ($currentSlot->lt($closingTime)) {
+                    $slotEnd = (clone $currentSlot)->addHour();
                     
-                    // Check if booking overlaps with this slot
-                    if (
-                        ($bookingStart->lte($slotStart) && $bookingEnd->gt($slotStart)) ||
-                        ($bookingStart->lt($slotEnd) && $bookingEnd->gte($slotEnd)) ||
-                        ($bookingStart->gte($slotStart) && $bookingEnd->lte($slotEnd))
-                    ) {
-                        $slot['available'] = false;
+                    if ($slotEnd->gt($closingTime)) {
+                        $slotEnd = clone $closingTime;
+                    }
+                    
+                    $timeSlots[] = [
+                        'start' => $currentSlot->format('H:i'),
+                        'end' => $slotEnd->format('H:i'),
+                        'formatted' => $currentSlot->format('g:i A') . ' - ' . $slotEnd->format('g:i A'),
+                        'available' => true,
+                    ];
+                    
+                    $currentSlot->addHour();
+                }
+                
+                // Check which slots are booked for this sub-facility
+                $bookings = Booking::where('date', $this->selectedDate)
+                    ->where('sub_facility_id', $this->subFacility->id)
+                    ->get();
+                    
+                // Add booking count to debug
+                $this->debug .= "\nFound {$bookings->count()} bookings for this date";
+                
+                // If there are no time slots created, add that to debug
+                if (count($timeSlots) === 0) {
+                    $this->debug .= "\nNo time slots were generated. Please check facility opening/closing times.";
+                } else {
+                    $this->debug .= "\nGenerated " . count($timeSlots) . " time slots";
+                }
+                
+                foreach ($bookings as $booking) {
+                    $bookingStart = Carbon::parse($booking->start_time);
+                    $bookingEnd = Carbon::parse($booking->end_time);
+                    
+                    foreach ($timeSlots as &$slot) {
+                        $slotStart = Carbon::parse($slot['start']);
+                        $slotEnd = Carbon::parse($slot['end']);
+                        
+                        // Check if booking overlaps with this slot
+                        if (
+                            ($bookingStart->lte($slotStart) && $bookingEnd->gt($slotStart)) ||
+                            ($bookingStart->lt($slotEnd) && $bookingEnd->gte($slotEnd)) ||
+                            ($bookingStart->gte($slotStart) && $bookingEnd->lte($slotEnd))
+                        ) {
+                            $slot['available'] = false;
+                        }
                     }
                 }
+                
+                $this->availableTimeSlots = $timeSlots;
+            } catch (\Exception $e) {
+                // Handle any errors that occur during time slot generation
+                $this->debug = "Error generating time slots: " . $e->getMessage();
+                
+                // Provide default time slots (9 AM to 5 PM) if there's an error
+                $this->availableTimeSlots = $this->generateDefaultTimeSlots();
             }
-            
-            $this->availableTimeSlots = $timeSlots;
         } else {
-            $this->availableTimeSlots = $this->facility->getAvailableTimeSlots($this->selectedDate);
+            try {
+                $this->availableTimeSlots = $this->facility->getAvailableTimeSlots($this->selectedDate);
+                $this->debug = "Main facility booking: {$this->facility->id} - {$this->facility->name}\n";
+                $this->debug .= "Generated " . count($this->availableTimeSlots) . " time slots";
+            } catch (\Exception $e) {
+                $this->debug = "Error generating time slots: " . $e->getMessage();
+                $this->availableTimeSlots = $this->generateDefaultTimeSlots();
+            }
         }
+    }
+    
+    /**
+     * Generate default time slots from 9 AM to 5 PM
+     * 
+     * @return array Default time slots
+     */
+    private function generateDefaultTimeSlots()
+    {
+        $timeSlots = [];
+        $start = Carbon::parse('09:00');
+        $end = Carbon::parse('17:00');
+        
+        $currentSlot = clone $start;
+        
+        while ($currentSlot->lt($end)) {
+            $slotEnd = (clone $currentSlot)->addHour();
+            
+            $timeSlots[] = [
+                'start' => $currentSlot->format('H:i'),
+                'end' => $slotEnd->format('H:i'),
+                'formatted' => $currentSlot->format('g:i A') . ' - ' . $slotEnd->format('g:i A'),
+                'available' => true,
+            ];
+            
+            $currentSlot->addHour();
+        }
+        
+        return $timeSlots;
     }
     
     public function toggleTimeSlot($index)

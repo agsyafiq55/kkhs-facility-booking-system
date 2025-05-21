@@ -40,7 +40,7 @@ class Booking extends Model
      */
     public function subFacility(): BelongsTo
     {
-        return $this->belongsTo(Facility::class, 'sub_facility_id');
+        return $this->belongsTo(SubFacility::class, 'sub_facility_id');
     }
 
     /**

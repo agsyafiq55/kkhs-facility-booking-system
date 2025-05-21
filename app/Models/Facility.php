@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -68,8 +69,13 @@ class Facility extends Model
     public function getAvailableTimeSlots($date)
     {
         // Generate all possible time slots based on opening and closing times
-        $openingTime = \Carbon\Carbon::parse($this->opening_time);
-        $closingTime = \Carbon\Carbon::parse($this->closing_time);
+        $openingTime = Carbon::parse($this->opening_time);
+        $closingTime = Carbon::parse($this->closing_time);
+        
+        // Special handling for midnight (00:00) - treat it as 24:00
+        if ($closingTime->format('H:i') === '00:00') {
+            $closingTime = Carbon::parse('23:59:59');
+        }
         
         $timeSlots = [];
         $currentSlot = clone $openingTime;
@@ -101,12 +107,12 @@ class Facility extends Model
             ->get();
         
         foreach ($bookings as $booking) {
-            $bookingStart = \Carbon\Carbon::parse($booking->start_time);
-            $bookingEnd = \Carbon\Carbon::parse($booking->end_time);
+            $bookingStart = Carbon::parse($booking->start_time);
+            $bookingEnd = Carbon::parse($booking->end_time);
             
             foreach ($timeSlots as &$slot) {
-                $slotStart = \Carbon\Carbon::parse($slot['start']);
-                $slotEnd = \Carbon\Carbon::parse($slot['end']);
+                $slotStart = Carbon::parse($slot['start']);
+                $slotEnd = Carbon::parse($slot['end']);
                 
                 // Check if booking overlaps with this slot
                 if (
