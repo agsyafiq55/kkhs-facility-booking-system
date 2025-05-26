@@ -21,18 +21,16 @@
                         <div class="bg-neutral-50 dark:bg-zinc-700 p-6 rounded-lg">
                             <h3 class="text-lg font-semibold mb-2">My Bookings</h3>
                             <p class="text-gray-600 dark:text-neutral-400 mb-4">View and manage your room bookings</p>
-                            <flux:button>
+                            <flux:button href="{{ route('teacher.bookings.index') }}" wire:navigate>
                                 View Bookings
-                                <span class="text-xs ml-1">(Coming Soon)</span>
                             </flux:button>
                         </div>
 
                         <div class="bg-neutral-50 dark:bg-zinc-700 p-6 rounded-lg">
                             <h3 class="text-lg font-semibold mb-2">New Booking</h3>
                             <p class="text-gray-600 dark:text-neutral-400 mb-4">Book a room for your class</p>
-                            <flux:button variant="primary">
+                            <flux:button variant="primary" href="{{ route('teacher.facilities.index') }}" wire:navigate>
                                 Book Now
-                                <span class="text-xs ml-1">(Coming Soon)</span>
                             </flux:button>
                         </div>
 

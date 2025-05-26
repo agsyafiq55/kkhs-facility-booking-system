@@ -20,5 +20,10 @@ Route::middleware(['auth', 'verified', 'role:teacher'])->prefix('teacher')->grou
         return view('teacher.facilities.show', compact('facility'));
     })->name('teacher.facilities.show');
     
+    // Booking routes for teachers
+    Route::get('/bookings', function () {
+        return view('teacher.bookings.index');
+    })->name('teacher.bookings.index');
+    
     // Add more teacher routes here
 });

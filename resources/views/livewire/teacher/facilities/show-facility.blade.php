@@ -53,24 +53,6 @@
                         @endif
                     </flux:text>
                 </div>
-
-                <!-- Call to Action Button -->
-                @if($facility->status === 'available')
-                    <div class="mt-4">
-                        <flux:button variant="primary">
-                            Request Booking
-                            <span class="text-xs ml-1">(Coming Soon)</span>
-                        </flux:button>
-                    </div>
-                @elseif($facility->status === 'maintenance')
-                    <flux:callout icon="information-circle" class="mt-4">
-                        <flux:callout.text>This facility is currently under maintenance and not available for booking.</flux:callout.text>
-                    </flux:callout>
-                @else
-                    <flux:callout icon="x-circle" class="mt-4">
-                        <flux:callout.text>This facility is currently unavailable for booking.</flux:callout.text>
-                    </flux:callout>
-                @endif
             </div>
         </div>
 
@@ -89,74 +71,17 @@
                 @endif
             </div>
         </div>
-
-        <!-- Facility Add-ons and Sub-facilities -->
-        @if($facility->has_addons || $facility->has_sub_facilities)
-        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            @if($facility->has_addons)
-            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow p-3">
-                <flux:heading size="lg" class="font-semibold">Available Add-ons</flux:heading>
-                
-                @if(isset($facility->addons) && count($facility->addons) > 0)
-                <ul class="mt-2 space-y-2">
-                    @foreach($facility->addons as $addon)
-                    <li class="flex items-center justify-between">
-                        <flux:text>{{ $addon->name }}</flux:text>
-                    </li>
-                    @endforeach
-                </ul>
-                @else
-                <flux:callout icon="information-circle" class="mt-2">
-                    <flux:callout.text>
-                        Add-ons coming soon!
-                    </flux:callout.text>
-                </flux:callout>
-                @endif
-            </div>
-            @endif
-
-            @if($facility->has_sub_facilities)
-            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow p-3">
-                <flux:heading size="lg" class="font-semibold">Sub-facilities</flux:heading>
-                
-                @if(isset($facility->subFacilities) && count($facility->subFacilities) > 0)
-                <ul class="mt-2 space-y-2">
-                    @foreach($facility->subFacilities as $subFacility)
-                    <li class="flex items-center justify-between">
-                        <flux:text>{{ $subFacility->name }}</flux:text>
-                        <flux:badge color="{{ $subFacility->status === 'available' ? 'lime' : ($subFacility->status === 'maintenance' ? 'amber' : 'red') }}">
-                            {{ ucfirst($subFacility->status) }}
-                        </flux:badge>
-                    </li>
-                    @endforeach
-                </ul>
-                @else
-                <flux:callout icon="information-circle" class="mt-2">
-                    <flux:callout.text>
-                        Sub-facilities coming soon!
-                    </flux:callout.text>
-                </flux:callout>
-                @endif
-            </div>
-            @endif
-        </div>
-        @endif
         
         <!-- Booking Section -->
         @if($facility->status === 'available')
             @if(!$facility->has_sub_facilities)
                 <div class="mt-6 bg-white dark:bg-zinc-900 rounded-lg shadow p-4">
-                    <flux:heading size="lg" class="mb-4">Book Facility</flux:heading>
+                    <flux:heading size="lg">Book Facility</flux:heading>
                     <livewire:facility-booking :facility="$facility" />
                 </div>
             @else
                 <div class="mt-6 bg-white dark:bg-zinc-900 rounded-lg shadow p-4">
-                    <flux:heading size="lg" class="mb-4">Book Sub-facilities</flux:heading>
-                    <flux:callout icon="information-circle">
-                        <flux:callout.text>
-                            This facility has sub-facilities that can be booked individually. Please select a sub-facility to book.
-                        </flux:callout.text>
-                    </flux:callout>
+                    <flux:heading size="lg">Book Sub-facilities</flux:heading>
                     
                     @if(isset($facility->subFacilities) && count($facility->subFacilities) > 0)
                         <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

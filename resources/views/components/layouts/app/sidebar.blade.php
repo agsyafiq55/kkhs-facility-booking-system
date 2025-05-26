@@ -25,6 +25,8 @@
                     @if(auth()->user()->isTeacher())
                     <!-- Teacher Links -->
                     <flux:navlist.item icon="building-office" :href="route('teacher.facilities.index')" :current="request()->routeIs('teacher.facilities.index')" wire:navigate>{{ __('View Facilities') }}</flux:navlist.item>
+                    
+                    <flux:navlist.item icon="calendar" :href="route('teacher.bookings.index')" :current="request()->routeIs('teacher.bookings.*')" wire:navigate>{{ __('View Bookings') }}</flux:navlist.item>
                     @endif
                 </flux:navlist.group>
             </flux:navlist>
