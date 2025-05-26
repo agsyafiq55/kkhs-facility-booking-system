@@ -16,13 +16,13 @@ class FacilityBooking extends Component
     public string $selectedDate;
     public array $selectedTimeSlots = [];
     public array $availableTimeSlots = [];
-    public string $notes = '';
+    public string $purpose = '';
     public ?string $debug = null;
     
     protected $rules = [
         'selectedDate' => 'required|date|after_or_equal:today',
         'selectedTimeSlots' => 'required|array|min:1',
-        'notes' => 'nullable|string|max:500',
+        'purpose' => 'required|string|max:500',
     ];
     
     public function mount(Facility $facility, ?SubFacility $subFacility = null)
@@ -235,12 +235,12 @@ class FacilityBooking extends Component
                 'start_time' => $group['start'],
                 'end_time' => $group['end'],
                 'status' => 'pending',
-                'notes' => $this->notes,
+                'notes' => $this->purpose,
             ]);
         }
         
         session()->flash('message', 'Booking request submitted successfully!');
-        $this->reset(['selectedTimeSlots', 'notes']);
+        $this->reset(['selectedTimeSlots', 'purpose']);
         $this->loadTimeSlots();
     }
     

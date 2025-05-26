@@ -71,6 +71,7 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Time</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Purpose</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
@@ -100,6 +101,16 @@
                                 <flux:badge color="gray">Cancelled</flux:badge>
                                 @break
                                 @endswitch
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                <div class="max-w-xs truncate">
+                                    {{ $booking->notes ?: 'No purpose specified' }}
+                                </div>
+                                <flux:modal.trigger name="admin-view-purpose-{{ $booking->id }}">
+                                    <flux:button variant="ghost" size="xs" class="mt-1">
+                                        View Details
+                                    </flux:button>
+                                </flux:modal.trigger>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex space-x-2">
@@ -166,6 +177,80 @@
                             Delete Booking
                         </flux:button>
                     </form>
+                </div>
+            </div>
+        </flux:modal>
+
+        <!-- Purpose Detail Modal -->
+        <flux:modal name="admin-view-purpose-{{ $booking->id }}" class="md:w-96">
+            <div class="space-y-4">
+                <div>
+                    <flux:heading size="lg">Booking Purpose</flux:heading>
+                </div>
+
+                <div>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Facility</div>
+                            <div class="mt-1 text-gray-900 dark:text-white">
+                                {{ $booking->facility->name }}
+                                @if ($booking->subFacility)
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        {{ $booking->subFacility->name }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Booked by</div>
+                            <div class="mt-1 text-gray-900 dark:text-white">
+                                {{ $booking->user->name }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Date & Time</div>
+                            <div class="mt-1 text-gray-900 dark:text-white">
+                                {{ $booking->date->format('F d, Y') }}<br>
+                                {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} - 
+                                {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</div>
+                            <div class="mt-1">
+                                @switch($booking->status)
+                                @case('pending')
+                                <flux:badge color="amber">Pending</flux:badge>
+                                @break
+                                @case('approved')
+                                <flux:badge color="green">Approved</flux:badge>
+                                @break
+                                @case('rejected')
+                                <flux:badge color="red">Rejected</flux:badge>
+                                @break
+                                @case('cancelled')
+                                <flux:badge color="gray">Cancelled</flux:badge>
+                                @break
+                                @endswitch
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Purpose</div>
+                            <div class="mt-1 text-gray-900 dark:text-white">
+                                {{ $booking->notes ?: 'No purpose specified' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end mt-6">
+                    <flux:modal.close>
+                        <flux:button>Close</flux:button>
+                    </flux:modal.close>
                 </div>
             </div>
         </flux:modal>

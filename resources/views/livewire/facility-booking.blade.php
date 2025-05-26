@@ -42,8 +42,9 @@
 
         <div class="mb-4">
             <flux:field>
-                <flux:label>Notes (Optional)</flux:label>
-                <flux:textarea wire:model="notes" rows="3" placeholder="Add any special requirements or notes for this booking"></flux:textarea>
+                <flux:label>Purpose <span class="text-red-500">*</span></flux:label>
+                <flux:textarea wire:model="purpose" rows="3" placeholder="Specify the purpose of this booking (required)"></flux:textarea>
+                @error('purpose') <div class="mt-1 text-red-500 text-sm">{{ $message }}</div> @enderror
             </flux:field>
         </div>
 

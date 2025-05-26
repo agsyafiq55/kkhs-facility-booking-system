@@ -81,7 +81,7 @@
 
                         @if($booking->notes)
                         <div class="flex flex-col">
-                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">User Notes</span>
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Purpose</span>
                             <p class="text-gray-900 dark:text-white mt-1 text-sm bg-gray-50 dark:bg-zinc-700 p-3 rounded-md">
                                 {{ $booking->notes }}
                             </p>
