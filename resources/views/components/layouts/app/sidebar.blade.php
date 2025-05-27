@@ -11,25 +11,31 @@
                 <x-app-logo />
             </a>
 
+            <!-- Admin Sidebar Links -->
+            @if(auth()->user()->isAdmin())
             <flux:navlist variant="outline">
-                <flux:navlist.group :heading="__('Platform')" class="grid">
+                <flux:navlist.group :heading="__('Admin Links')" class="grid">
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
-
-                    @if(auth()->user()->isAdmin())
-                    <!-- Admin Links -->
-                    <flux:navlist.item icon="building-office" :href="route('admin.facilities.index')" :current="request()->routeIs('admin.facilities.index')" wire:navigate>{{ __('Manage Facilities') }}</flux:navlist.item>
-                    
-                    <flux:navlist.item icon="calendar" :href="route('admin.bookings.index')" :current="request()->routeIs('admin.bookings.*')" wire:navigate>{{ __('Manage Bookings') }}</flux:navlist.item>
-                    @endif
-
-                    @if(auth()->user()->isTeacher())
-                    <!-- Teacher Links -->
-                    <flux:navlist.item icon="building-office" :href="route('teacher.facilities.index')" :current="request()->routeIs('teacher.facilities.index')" wire:navigate>{{ __('View Facilities') }}</flux:navlist.item>
-                    
-                    <flux:navlist.item icon="calendar" :href="route('teacher.bookings.index')" :current="request()->routeIs('teacher.bookings.*')" wire:navigate>{{ __('View Bookings') }}</flux:navlist.item>
-                    @endif
+                        <!-- Admin Links -->
+                        <flux:navlist.item icon="building-office" :href="route('admin.facilities.index')" :current="request()->routeIs('admin.facilities.index')" wire:navigate>{{ __('Manage Facilities') }}</flux:navlist.item>
+                        
+                        <flux:navlist.item icon="calendar" :href="route('admin.bookings.index')" :current="request()->routeIs('admin.bookings.*')" wire:navigate>{{ __('Manage Bookings') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
+            @endif
+
+            <!-- Teacher Sidebar Links -->
+            @if(auth()->user()->isTeacher())
+            <flux:navlist variant="outline">
+                <flux:navlist.group :heading="__('Teacher Links')" class="grid">
+                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                    <!-- Teacher Links -->
+                    <flux:navlist.item icon="building-office" :href="route('teacher.facilities.index')" :current="request()->routeIs('teacher.facilities.index')" wire:navigate>{{ __('Facilities') }}</flux:navlist.item>
+                    
+                    <flux:navlist.item icon="calendar" :href="route('teacher.bookings.index')" :current="request()->routeIs('teacher.bookings.*')" wire:navigate>{{ __('My Bookings') }}</flux:navlist.item>
+                </flux:navlist.group>
+            </flux:navlist>
+            @endif
 
             <flux:spacer />
 
