@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class FacilityAddon extends Model
 {
@@ -28,5 +29,15 @@ class FacilityAddon extends Model
     public function facility(): BelongsTo
     {
         return $this->belongsTo(Facility::class);
+    }
+    
+    /**
+     * Get the bookings that use this add-on.
+     */
+    public function bookings(): BelongsToMany
+    {
+        return $this->belongsToMany(Booking::class, 'booking_facility_addon')
+                    ->withPivot('quantity', 'notes')
+                    ->withTimestamps();
     }
 }

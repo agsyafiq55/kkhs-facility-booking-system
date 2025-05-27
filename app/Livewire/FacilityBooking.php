@@ -19,10 +19,17 @@ class FacilityBooking extends Component
     public string $purpose = '';
     public ?string $debug = null;
     
+    // Add-ons related properties
+    public array $availableAddons = [];
+    public array $selectedAddons = [];
+    public array $addonQuantities = [];
+    
     protected $rules = [
         'selectedDate' => 'required|date|after_or_equal:today',
         'selectedTimeSlots' => 'required|array|min:1',
         'purpose' => 'required|string|max:500',
+        'selectedAddons' => 'array',
+        'addonQuantities.*' => 'integer|min:1',
     ];
     
     public function mount(Facility $facility, ?SubFacility $subFacility = null)
@@ -30,7 +37,51 @@ class FacilityBooking extends Component
         $this->facility = $facility;
         $this->subFacility = $subFacility;
         $this->selectedDate = Carbon::today()->format('Y-m-d');
+        
+        // Load available add-ons if the facility has add-ons
+        if ($this->facility->has_addons) {
+            $this->loadAvailableAddons();
+        }
+        
         $this->loadTimeSlots();
+    }
+    
+    public function loadAvailableAddons()
+    {
+        $this->availableAddons = $this->facility->addons()
+            ->where('is_available', true)
+            ->get()
+            ->toArray();
+            
+        // Initialize addon quantities
+        foreach ($this->availableAddons as $addon) {
+            $this->addonQuantities[$addon['id']] = 1;
+        }
+    }
+    
+    public function toggleAddon($addonId)
+    {
+        if (in_array($addonId, $this->selectedAddons)) {
+            $this->selectedAddons = array_diff($this->selectedAddons, [$addonId]);
+        } else {
+            $this->selectedAddons[] = $addonId;
+        }
+    }
+    
+    public function incrementAddonQuantity($addonId)
+    {
+        $addon = collect($this->availableAddons)->firstWhere('id', $addonId);
+        
+        if ($addon && ($addon['quantity_available'] === 0 || $this->addonQuantities[$addonId] < $addon['quantity_available'])) {
+            $this->addonQuantities[$addonId]++;
+        }
+    }
+    
+    public function decrementAddonQuantity($addonId)
+    {
+        if (isset($this->addonQuantities[$addonId]) && $this->addonQuantities[$addonId] > 1) {
+            $this->addonQuantities[$addonId]--;
+        }
     }
     
     public function updatedSelectedDate()
@@ -227,7 +278,7 @@ class FacilityBooking extends Component
         
         // Create bookings for each group
         foreach ($bookingGroups as $group) {
-            Booking::create([
+            $booking = Booking::create([
                 'facility_id' => $this->facility->id,
                 'sub_facility_id' => $this->subFacility ? $this->subFacility->id : null,
                 'user_id' => Auth::id(),
@@ -237,10 +288,27 @@ class FacilityBooking extends Component
                 'status' => 'pending',
                 'notes' => $this->purpose,
             ]);
+            
+            // Attach selected add-ons to the booking
+            if (!empty($this->selectedAddons)) {
+                foreach ($this->selectedAddons as $addonId) {
+                    if (isset($this->addonQuantities[$addonId])) {
+                        $booking->addons()->attach($addonId, [
+                            'quantity' => $this->addonQuantities[$addonId],
+                        ]);
+                    }
+                }
+            }
         }
         
         session()->flash('message', 'Booking request submitted successfully!');
-        $this->reset(['selectedTimeSlots', 'purpose']);
+        $this->reset(['selectedTimeSlots', 'purpose', 'selectedAddons', 'addonQuantities']);
+        
+        // Reload available add-ons
+        if ($this->facility->has_addons) {
+            $this->loadAvailableAddons();
+        }
+        
         $this->loadTimeSlots();
     }
     

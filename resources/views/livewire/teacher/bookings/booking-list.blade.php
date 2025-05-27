@@ -166,6 +166,24 @@
                                 {{ $booking->notes ?: 'No purpose specified' }}
                             </div>
                         </div>
+                        
+                        @if ($booking->addons->count() > 0)
+                            <div>
+                                <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Add-ons</div>
+                                <div class="mt-1">
+                                    <ul class="list-disc pl-5 text-gray-900 dark:text-white">
+                                        @foreach ($booking->addons as $addon)
+                                            <li>
+                                                {{ $addon->name }} 
+                                                @if ($addon->pivot->quantity > 1)
+                                                    <span class="text-gray-500 dark:text-gray-400">(x{{ $addon->pivot->quantity }})</span>
+                                                @endif
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 

@@ -87,6 +87,24 @@
                             </p>
                         </div>
                         @endif
+                        
+                        @if($booking->addons->count() > 0)
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Selected Add-ons</span>
+                            <div class="mt-2 bg-gray-50 dark:bg-zinc-700 p-3 rounded-md">
+                                <ul class="list-disc pl-5 text-gray-900 dark:text-white text-sm">
+                                    @foreach($booking->addons as $addon)
+                                    <li class="mb-1">
+                                        {{ $addon->name }}
+                                        @if($addon->pivot->quantity > 1)
+                                        <span class="text-gray-500 dark:text-gray-400">(x{{ $addon->pivot->quantity }})</span>
+                                        @endif
+                                    </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -109,9 +127,8 @@
                         </flux:field>
 
                         <flux:field>
-                            <flux:label>Admin Notes</flux:label>
+                            <flux:label>Purpose of Booking</flux:label>
                             <flux:textarea wire:model="notes" rows="4"></flux:textarea>
-                            <flux:description>Add notes about this booking (optional)</flux:description>
                             <flux:error name="notes" />
                         </flux:field>
 

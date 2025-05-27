@@ -11,39 +11,52 @@
         <div class="mb-6 p-4 bg-gray-50 dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-700">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <!-- Filter Controls -->
-                <div class="w-full">
+                <div class="w-full sm:w-1/2">
                     <flux:text class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Filter by status:</flux:text>
                     <div class="flex flex-wrap gap-2">
-                        <flux:button 
-                            wire:click="filterByStatus('')" 
+                        <flux:button
+                            wire:click="filterByStatus('')"
                             variant="{{ !$status ? 'primary' : 'subtle' }}"
                             class="text-sm">
                             All
                         </flux:button>
-                        <flux:button 
-                            wire:click="filterByStatus('pending')" 
+                        <flux:button
+                            wire:click="filterByStatus('pending')"
                             variant="{{ $status === 'pending' ? 'filled' : 'subtle' }}"
                             class="text-sm">
                             Pending
                         </flux:button>
-                        <flux:button 
-                            wire:click="filterByStatus('approved')" 
+                        <flux:button
+                            wire:click="filterByStatus('approved')"
                             variant="{{ $status === 'approved' ? 'filled' : 'subtle' }}"
                             class="text-sm">
                             Approved
                         </flux:button>
-                        <flux:button 
-                            wire:click="filterByStatus('rejected')" 
+                        <flux:button
+                            wire:click="filterByStatus('rejected')"
                             variant="{{ $status === 'rejected' ? 'filled' : 'subtle' }}"
                             class="text-sm">
                             Rejected
                         </flux:button>
-                        <flux:button 
-                            wire:click="filterByStatus('cancelled')" 
+                        <flux:button
+                            wire:click="filterByStatus('cancelled')"
                             variant="{{ $status === 'cancelled' ? 'filled' : 'subtle' }}"
                             class="text-sm">
                             Cancelled
                         </flux:button>
+                    </div>
+                </div>
+
+                <!-- Date Range Filter -->
+                <div class="w-full sm:w-1/2">
+                    <flux:text class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Filter by date range:</flux:text>
+                    <div class="flex items-center">
+                        <flux:select wire:model.live="dateRange" wire:change="filterByDateRange($event.target.value)" class="w-full">
+                            <flux:select.option value="all">All dates</flux:select.option>
+                            <flux:select.option value="day">Today</flux:select.option>
+                            <flux:select.option value="week">This week</flux:select.option>
+                            <flux:select.option value="month">This month</flux:select.option>
+                        </flux:select>
                     </div>
                 </div>
             </div>
@@ -51,15 +64,28 @@
 
         <!-- Success Message -->
         @if(session('success'))
-            <flux:callout icon="check-circle" class="mb-6">
-                <flux:callout.heading>Success</flux:callout.heading>
-                <flux:callout.text>{{ session('success') }}</flux:callout.text>
-            </flux:callout>
+        <flux:callout icon="check-circle" class="mb-6">
+            <flux:callout.heading>Success</flux:callout.heading>
+            <flux:callout.text>{{ session('success') }}</flux:callout.text>
+        </flux:callout>
         @endif
 
         <flux:separator variant="subtle" class="mb-6" />
 
         <!-- Bookings Table -->
+        <div class="flex-1 max-md:p-6 self-stretch">
+            <flux:heading size="xl" level="1">
+                @if($dateRange == 'day')
+                    Bookings for today
+                @elseif($dateRange == 'week')
+                    Bookings for this week
+                @elseif($dateRange == 'month')
+                    Bookings in {{ now()->format('F') }}
+                @else
+                    All Bookings
+                @endif
+            </flux:heading>
+        </div>
         <div class="bg-white dark:bg-zinc-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-zinc-700">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-zinc-700">
@@ -120,7 +146,7 @@
                                         </svg>
                                         Edit
                                     </flux:button>
-                                    
+
                                     <flux:modal.trigger name="delete-booking-{{ $booking->id }}">
                                         <flux:button variant="danger" class="text-sm">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 inline-block" viewBox="0 0 20 20" fill="currentColor">
@@ -152,107 +178,125 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Delete Confirmation Modals -->
     @foreach($bookings as $booking)
-        <flux:modal name="delete-booking-{{ $booking->id }}" class="md:w-96">
+    <flux:modal name="delete-booking-{{ $booking->id }}" class="md:w-96">
+        <div>
             <div>
-                <div>
-                    <flux:heading size="lg">Delete Booking?</flux:heading>
-                    <flux:text class="mt-2">
-                        <p>You're about to delete booking #{{ $booking->id }} for <strong>{{ $booking->facility->name }}</strong>.</p>
-                        <p>This action cannot be undone.</p>
-                    </flux:text>
-                </div>
-
-                <div class="flex justify-end gap-2 mt-6">
-                    <flux:modal.close>
-                        <flux:button variant="ghost">Cancel</flux:button>
-                    </flux:modal.close>
-
-                    <form action="{{ route('admin.bookings.destroy', $booking) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <flux:button variant="danger" type="submit">
-                            Delete Booking
-                        </flux:button>
-                    </form>
-                </div>
+                <flux:heading size="lg">Delete Booking?</flux:heading>
+                <flux:text class="mt-2">
+                    <p>You're about to delete booking #{{ $booking->id }} for <strong>{{ $booking->facility->name }}</strong>.</p>
+                    <p>This action cannot be undone.</p>
+                </flux:text>
             </div>
-        </flux:modal>
 
-        <!-- Purpose Detail Modal -->
-        <flux:modal name="admin-view-purpose-{{ $booking->id }}" class="md:w-96">
-            <div class="space-y-4">
-                <div>
-                    <flux:heading size="lg">Booking Purpose</flux:heading>
-                </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <flux:modal.close>
+                    <flux:button variant="ghost">Cancel</flux:button>
+                </flux:modal.close>
 
-                <div>
-                    <div class="space-y-3">
-                        <div>
-                            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Facility</div>
-                            <div class="mt-1 text-gray-900 dark:text-white">
-                                {{ $booking->facility->name }}
-                                @if ($booking->subFacility)
-                                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $booking->subFacility->name }}
-                                    </div>
-                                @endif
+                <form action="{{ route('admin.bookings.destroy', $booking) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <flux:button variant="danger" type="submit">
+                        Delete Booking
+                    </flux:button>
+                </form>
+            </div>
+        </div>
+    </flux:modal>
+
+    <!-- Purpose Detail Modal -->
+    <flux:modal name="admin-view-purpose-{{ $booking->id }}" class="md:w-96">
+        <div class="space-y-4">
+            <div>
+                <flux:heading size="lg">Booking Purpose</flux:heading>
+            </div>
+
+            <div>
+                <div class="space-y-3">
+                    <div>
+                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Facility</div>
+                        <div class="mt-1 text-gray-900 dark:text-white">
+                            {{ $booking->facility->name }}
+                            @if ($booking->subFacility)
+                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                                {{ $booking->subFacility->name }}
                             </div>
-                        </div>
-
-                        <div>
-                            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Booked by</div>
-                            <div class="mt-1 text-gray-900 dark:text-white">
-                                {{ $booking->user->name }}
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Date & Time</div>
-                            <div class="mt-1 text-gray-900 dark:text-white">
-                                {{ $booking->date->format('F d, Y') }}<br>
-                                {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} - 
-                                {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</div>
-                            <div class="mt-1">
-                                @switch($booking->status)
-                                @case('pending')
-                                <flux:badge color="amber">Pending</flux:badge>
-                                @break
-                                @case('approved')
-                                <flux:badge color="green">Approved</flux:badge>
-                                @break
-                                @case('rejected')
-                                <flux:badge color="red">Rejected</flux:badge>
-                                @break
-                                @case('cancelled')
-                                <flux:badge color="gray">Cancelled</flux:badge>
-                                @break
-                                @endswitch
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Purpose</div>
-                            <div class="mt-1 text-gray-900 dark:text-white">
-                                {{ $booking->notes ?: 'No purpose specified' }}
-                            </div>
+                            @endif
                         </div>
                     </div>
-                </div>
 
-                <div class="flex justify-end mt-6">
-                    <flux:modal.close>
-                        <flux:button>Close</flux:button>
-                    </flux:modal.close>
+                    <div>
+                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Booked by</div>
+                        <div class="mt-1 text-gray-900 dark:text-white">
+                            {{ $booking->user->name }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Date & Time</div>
+                        <div class="mt-1 text-gray-900 dark:text-white">
+                            {{ $booking->date->format('F d, Y') }}<br>
+                            {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} -
+                            {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</div>
+                        <div class="mt-1">
+                            @switch($booking->status)
+                            @case('pending')
+                            <flux:badge color="amber">Pending</flux:badge>
+                            @break
+                            @case('approved')
+                            <flux:badge color="green">Approved</flux:badge>
+                            @break
+                            @case('rejected')
+                            <flux:badge color="red">Rejected</flux:badge>
+                            @break
+                            @case('cancelled')
+                            <flux:badge color="gray">Cancelled</flux:badge>
+                            @break
+                            @endswitch
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Purpose</div>
+                        <div class="mt-1 text-gray-900 dark:text-white">
+                            {{ $booking->notes ?: 'No purpose specified' }}
+                        </div>
+                    </div>
+
+                    @if ($booking->addons->count() > 0)
+                    <div>
+                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Add-ons</div>
+                        <div class="mt-1">
+                            <ul class="list-disc pl-5 text-gray-900 dark:text-white">
+                                @foreach ($booking->addons as $addon)
+                                <li>
+                                    {{ $addon->name }}
+                                    @if ($addon->pivot->quantity > 1)
+                                    <span class="text-gray-500 dark:text-gray-400">(x{{ $addon->pivot->quantity }})</span>
+                                    @endif
+                                </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
-        </flux:modal>
+
+            <div class="flex justify-end mt-6">
+                <flux:modal.close>
+                    <flux:button>Close</flux:button>
+                </flux:modal.close>
+            </div>
+        </div>
+    </flux:modal>
     @endforeach
 </div>
