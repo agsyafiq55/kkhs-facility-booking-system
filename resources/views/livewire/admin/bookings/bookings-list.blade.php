@@ -162,7 +162,7 @@
                                     
                                     <div class="flex mt-2 space-x-1">
                                         <flux:tooltip content="Approve">
-                                            <flux:button wire:click="approveBooking({{ $booking->id }})" variant="ghost" class="p-1 text-green-600 hover:text-green-800 dark:text-green-500 dark:hover:text-green-400">
+                                            <flux:button wire:click="approveBooking({{ $booking->id }})" variant="filled" class="p-1 text-green-600 hover:text-green-800 dark:text-green-500 dark:hover:text-green-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                                 </svg>
@@ -170,7 +170,7 @@
                                         </flux:tooltip>
                                         
                                         <flux:tooltip content="Reject">
-                                            <flux:button wire:click="rejectBooking({{ $booking->id }})" variant="ghost" class="p-1 text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400">
+                                            <flux:button wire:click="rejectBooking({{ $booking->id }})" variant="filled" class="p-1 text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                                 </svg>
@@ -278,107 +278,116 @@
     </flux:modal>
 
     <!-- Purpose Detail Modal -->
-    <flux:modal name="admin-view-purpose-{{ $booking->id }}" class="md:w-96">
-        <div class="space-y-4">
-            <div>
+    <flux:modal name="admin-view-purpose-{{ $booking->id }}" class="md:w-[500px]">
+        <div class="space-y-6">
+            <!-- Header with Status Badge -->
+            <div class="border-b border-gray-200 dark:border-zinc-700 pb-4">
                 <flux:heading size="lg">Booking Details</flux:heading>
+                <div class="mt-2">
+                    @switch($booking->status)
+                    @case('pending')
+                    <flux:badge color="amber">Pending</flux:badge>
+                    @break
+                    @case('approved')
+                    <flux:badge color="green">Approved</flux:badge>
+                    @break
+                    @case('rejected')
+                    <flux:badge color="red">Rejected</flux:badge>
+                    @break
+                    @case('cancelled')
+                    <flux:badge color="gray">Cancelled</flux:badge>
+                    @break
+                    @endswitch
+                </div>
             </div>
 
-            <div>
-                <div class="space-y-3">
+            <!-- Booking ID and Date -->
+            <div class="bg-gray-50 dark:bg-zinc-800 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Facility</div>
-                        <div class="mt-1 text-gray-900 dark:text-white">
-                            {{ $booking->facility->name }}
-                            @if ($booking->subFacility)
-                            <div class="text-sm text-gray-500 dark:text-gray-400">
-                                {{ $booking->subFacility->name }}
-                            </div>
-                            @endif
-                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium">Booking ID</div>
+                        <div class="text-sm font-medium text-gray-900 dark:text-white">#{{ $booking->id }}</div>
                     </div>
+                    <div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium">Created On</div>
+                        <div class="text-sm text-gray-900 dark:text-white">{{ $booking->created_at->format('M d, Y') }}</div>
+                    </div>
+                </div>
+            </div>
 
-                    <div>
-                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Booked by</div>
-                        <div class="mt-1 text-gray-900 dark:text-white">
-                            {{ $booking->user->name }} ({{ $booking->user->email }})
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Date & Time</div>
-                        <div class="mt-1 text-gray-900 dark:text-white">
-                            {{ $booking->date->format('F d, Y') }}<br>
-                            {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} -
-                            {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</div>
-                        <div class="mt-1">
-                            @switch($booking->status)
-                            @case('pending')
-                            <flux:badge color="amber">Pending</flux:badge>
-                            @break
-                            @case('approved')
-                            <flux:badge color="green">Approved</flux:badge>
-                            @break
-                            @case('rejected')
-                            <flux:badge color="red">Rejected</flux:badge>
-                            @break
-                            @case('cancelled')
-                            <flux:badge color="gray">Cancelled</flux:badge>
-                            @break
-                            @endswitch
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Purpose</div>
-                        <div class="mt-1 text-gray-900 dark:text-white">
-                            {{ $booking->notes ?: 'No purpose specified' }}
-                        </div>
-                    </div>
-
-                    @if ($booking->addons->count() > 0)
-                    <div>
-                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Add-ons</div>
-                        <div class="mt-1">
-                            <ul class="list-disc pl-5 text-gray-900 dark:text-white">
-                                @foreach ($booking->addons as $addon)
-                                <li>
-                                    {{ $addon->name }}
-                                    @if ($addon->pivot->quantity > 1)
-                                    <span class="text-gray-500 dark:text-gray-400">(x{{ $addon->pivot->quantity }})</span>
-                                    @endif
-                                </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
+            <!-- Main Booking Information -->
+            <div class="space-y-4">
+                <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Facility</div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->facility->name }}</div>
+                    @if ($booking->subFacility)
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $booking->subFacility->name }}</div>
                     @endif
                 </div>
+                
+                <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Date & Time</div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->date->format('F d, Y') }}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} - 
+                        {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Booked By</div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->user->name }}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $booking->user->email }}</div>
+                </div>
+                
+                @if ($booking->addons->count() > 0)
+                <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Add-ons</div>
+                    <ul class="text-sm text-gray-900 dark:text-white space-y-1">
+                        @foreach ($booking->addons as $addon)
+                        <li class="flex justify-between">
+                            <span>{{ $addon->name }}</span>
+                            @if ($addon->pivot->quantity > 1)
+                            <span class="text-gray-500 dark:text-gray-400">x{{ $addon->pivot->quantity }}</span>
+                            @endif
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+            </div>
+            
+            <!-- Purpose/Notes Section -->
+            <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
+                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Purpose</div>
+                <div class="text-sm">
+                    {{ $booking->notes ?: 'No purpose specified' }}
+                </div>
             </div>
 
-            <div class="flex justify-between mt-6">
-                @if($booking->status === 'pending')
-                <div class="flex gap-2">
-                    <flux:button wire:click="approveBooking({{ $booking->id }})" variant="primary">
-                        Approve Booking
-                    </flux:button>
-                    
+            <!-- Action Buttons -->
+            <div class="flex justify-between pt-4 border-t border-gray-200 dark:border-zinc-700">
+                <div>
+                    @if($booking->status === 'pending')
+                    <div class="flex gap-2">
+                        <flux:button wire:click="approveBooking({{ $booking->id }})" variant="primary">
+                            Approve Booking
+                        </flux:button>
+                        
+                        <flux:button wire:click="rejectBooking({{ $booking->id }})" variant="danger">
+                            Reject
+                        </flux:button>
+                    </div>
+                    @elseif($booking->status === 'approved')
                     <flux:button wire:click="rejectBooking({{ $booking->id }})" variant="danger">
-                        Reject
+                        Cancel Booking
                     </flux:button>
+                    @elseif($booking->status === 'rejected')
+                    <flux:button wire:click="approveBooking({{ $booking->id }})" variant="primary">
+                        Approve Instead
+                    </flux:button>
+                    @endif
                 </div>
-                @else
-                <div></div>
-                @endif
-                
-                <flux:modal.close>
-                    <flux:button variant="ghost">Close</flux:button>
-                </flux:modal.close>
             </div>
         </div>
     </flux:modal>
