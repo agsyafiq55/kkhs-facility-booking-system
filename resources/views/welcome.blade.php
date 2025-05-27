@@ -10,7 +10,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="antialiased bg-gradient-to-br from-slate-900 to-indigo-950 text-white min-h-screen flex flex-col">
+<body class="antialiased bg-gradient-to-br from-black to-blue-950 text-white min-h-screen flex flex-col">
     <div class="flex-grow flex flex-col">
         <!-- Header/Navigation -->
         <header class="py-4 px-6 md:px-12 flex justify-between items-center">
@@ -18,10 +18,10 @@
                 <h1 class="text-2xl font-bold text-white">KKHS</h1>
             </div>
             <nav class="hidden md:flex space-x-10">
-                <a href="#" class="text-white hover:text-indigo-300 transition">Home</a>
-                <a href="#" class="text-white hover:text-indigo-300 transition">Facilities</a>
-                <a href="#" class="text-white hover:text-indigo-300 transition">How to Book</a>
-                <a href="#" class="text-white hover:text-indigo-300 transition">Contact</a>
+                <a href="#" class="text-white hover:text-blue-300 transition">Home</a>
+                <a href="#" class="text-white hover:text-blue-300 transition">Facilities</a>
+                <a href="#" class="text-white hover:text-blue-300 transition">How to Book</a>
+                <a href="#" class="text-white hover:text-blue-300 transition">Contact</a>
             </nav>
             <div class="flex space-x-4">
                 <a href="{{ route('login') }}" class="hidden md:block">
@@ -51,10 +51,13 @@
                 </div>
                 <div class="md:w-1/2 mt-12 md:mt-0 flex justify-center">
                     <div class="relative">
-                        <!-- Abstract shape similar to the one in the image -->
-                        <div class="w-72 h-72 md:w-96 md:h-96 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full opacity-80 blur-xl absolute -top-10 -right-10"></div>
-                        <div class="w-72 h-72 md:w-96 md:h-96 bg-gradient-to-r from-indigo-400 to-fuchsia-500 rounded-full opacity-70 animate-pulse absolute top-0 right-0"></div>
-                        <img src="{{ asset('images/school-building.jpg') }}" alt="School Facility" class="relative z-10 w-full max-w-md rounded-lg shadow-xl">
+                        <!-- Abstract shape behind the SVG -->
+                        <div class="w-72 h-72 md:w-96 md:h-96 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full opacity-80 blur-xl absolute -top-10 -right-10"></div>
+                        <div class="w-72 h-72 md:w-96 md:h-96 bg-gradient-to-r from-blue-300 to-cyan-500 rounded-full opacity-70 animate-pulse absolute top-0 right-0"></div>
+                        <!-- Booking illustration SVG -->
+                        <div class="relative z-10 w-full max-w-md">
+                            <img src="{{ asset('images/booking-illustration.svg') }}" alt="Booking Illustration" class="w-full h-full object-contain">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -69,17 +72,17 @@
     </div>
 
     <!-- Footer - Anchored to bottom -->
-    <footer class="bg-slate-900 py-8">
+    <footer class="bg-transparent py-8">
         <div class="container mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="mb-4 md:mb-0">
                     <p class="text-white text-sm">&copy; {{ date('Y') }} KKHS Facility Booking System. All rights reserved.</p>
                 </div>
-                <div class="flex space-x-4">
+                <!-- <div class="flex space-x-4">
                     <a href="#" class="text-gray-400 hover:text-white transition">Privacy Policy</a>
                     <a href="#" class="text-gray-400 hover:text-white transition">Terms of Service</a>
                     <a href="#" class="text-gray-400 hover:text-white transition">Help</a>
-                </div>
+                </div> -->
             </div>
         </div>
     </footer>
