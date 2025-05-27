@@ -84,6 +84,40 @@ class FacilityBooking extends Component
         }
     }
     
+    /**
+     * Handle manual updates to addon quantities
+     */
+    public function updatedAddonQuantities($value, $key)
+    {
+        $keyParts = explode('.', $key);
+        // Check if we have at least two parts in the key
+        if (count($keyParts) < 2) {
+            return;
+        }
+        
+        $addonId = (int) $keyParts[1];
+        $addon = collect($this->availableAddons)->firstWhere('id', $addonId);
+        
+        if (!$addon) {
+            return;
+        }
+        
+        // Ensure quantity is at least 1
+        if ($value < 1) {
+            $this->addonQuantities[$addonId] = 1;
+        }
+        
+        // Ensure quantity doesn't exceed available items if quantity is limited
+        if ($addon && $addon['quantity_available'] > 0 && $value > $addon['quantity_available']) {
+            $this->addonQuantities[$addonId] = $addon['quantity_available'];
+        }
+        
+        // Add to selected addons if not already selected
+        if (!in_array($addonId, $this->selectedAddons)) {
+            $this->selectedAddons[] = $addonId;
+        }
+    }
+    
     public function updatedSelectedDate()
     {
         $this->loadTimeSlots();
