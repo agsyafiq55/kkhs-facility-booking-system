@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-6">
-    <div class="text-center lg:text-left">
+    <div class="text-center">
         <flux:heading size="xl" class="mb-2 text-white">Log in to start booking facilities!</flux:heading>
         <flux:text class="text-gray-300">Enter your email and password below.</flux:text>
     </div>
@@ -11,12 +11,12 @@
         <!-- Email Address -->
         <flux:input
             wire:model="email"
-            :label="__('Email address')"
+            :label="__('DELIMA Email address')"
             type="email"
             required
             autofocus
             autocomplete="email"
-            placeholder="email@example.com"
+            placeholder="example@moe-dl.edu.my"
         />
 
         <!-- Password -->

@@ -28,13 +28,6 @@
                 <div class="w-full md:w-1/2 auth-gradient">
                     <!-- Content container with padding -->
                     <div class="relative z-10 p-6 md:p-10 lg:p-12">
-                        <a href="{{ route('home') }}" class="flex flex-col items-center md:items-start gap-2 font-medium mb-6" wire:navigate>
-                            <span class="flex h-9 w-9 items-center justify-center rounded-md">
-                                <x-app-logo-icon class="size-9 fill-current text-white" />
-                            </span>
-                            <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
-                        </a>
-                        
                         <div class="w-full text-white">
                             {{ $slot }}
                         </div>

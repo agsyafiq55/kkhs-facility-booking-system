@@ -19,11 +19,11 @@
         <!-- Email Address -->
         <flux:input
             wire:model="email"
-            :label="__('Email address')"
+            :label="__('DELIMA Email address')"
             type="email"
             required
             autocomplete="email"
-            placeholder="email@example.com"
+            placeholder="example@moe-dl.edu.my"
         />
 
         <!-- Password -->

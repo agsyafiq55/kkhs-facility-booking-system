@@ -201,7 +201,7 @@
                                     {{ $booking->notes ?: 'No purpose specified' }}
                                 </div>
                                 <flux:modal.trigger name="admin-view-purpose-{{ $booking->id }}">
-                                    <flux:button variant="ghost" size="xs" class="mt-1">
+                                    <flux:button variant="filled" size="xs" class="mt-1">
                                         View Details
                                     </flux:button>
                                 </flux:modal.trigger>
