@@ -115,7 +115,7 @@
             </flux:heading>
             
             <div>
-                <flux:button icon="arrow-down-tray" wire:click="exportBookings">
+                <flux:button icon="arrow-up-tray" wire:click="exportBookings">
                     Export as CSV
                 </flux:button>
             </div>
