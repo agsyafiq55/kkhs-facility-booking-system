@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-6">
     <div class="text-center lg:text-left">
-        <flux:heading size="xl" class="mb-2 text-white">Log in to your account</flux:heading>
-        <flux:text class="text-gray-300">Enter your email and password below to log in</flux:text>
+        <flux:heading size="xl" class="mb-2 text-white">Log in to start booking facilities!</flux:heading>
+        <flux:text class="text-gray-300">Enter your email and password below.</flux:text>
     </div>
 
     <!-- Session Status -->

@@ -16,13 +16,18 @@
             <div class="absolute inset-0 bg-gradient-to-br from-black/40 to-indigo-950/60"></div>
         </div>
         
-        <div class="min-h-screen flex justify-end">
-            <!-- Login Form Container - Right Side -->
-            <div class="w-full md:w-2/3 lg:w-1/2 xl:w-2/5 min-h-screen flex justify-center md:justify-end">
-                <!-- Translucent form area with left-to-right gradient -->
-                <div class="w-full max-w-lg flex flex-col justify-center relative overflow-hidden auth-gradient">
+        <div class="min-h-screen flex items-center justify-center px-4">
+            <!-- Content container - centered in page -->
+            <div class="w-full max-w-6xl flex flex-col md:flex-row rounded-xl overflow-hidden shadow-2xl">
+                <!-- Illustration - Left Side -->
+                <div class="w-full md:w-1/2 bg-white/10 backdrop-blur-sm p-8 flex items-center justify-center">
+                    <img src="{{ asset('images/login-illustration.svg') }}" alt="Login" class="w-full max-w-md h-auto" />
+                </div>
+                
+                <!-- Login Form - Right Side -->
+                <div class="w-full md:w-1/2 auth-gradient">
                     <!-- Content container with padding -->
-                    <div class="relative z-10 p-6 md:p-10 lg:p-16">
+                    <div class="relative z-10 p-6 md:p-10 lg:p-12">
                         <a href="{{ route('home') }}" class="flex flex-col items-center md:items-start gap-2 font-medium mb-6" wire:navigate>
                             <span class="flex h-9 w-9 items-center justify-center rounded-md">
                                 <x-app-logo-icon class="size-9 fill-current text-white" />

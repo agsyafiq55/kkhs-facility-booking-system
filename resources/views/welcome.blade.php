@@ -95,7 +95,6 @@
                     </p>
                     <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                         <flux:button variant="primary">Book a Facility</flux:button>
-                        <flux:button variant="ghost">View Facilities</flux:button>
                     </div>
                 </div>
                 <div class="md:w-1/2 mt-12 md:mt-0 flex justify-center">
