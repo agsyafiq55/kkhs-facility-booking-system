@@ -97,13 +97,12 @@ class Facility extends Model
             $currentSlot->addHour();
         }
         
-        // Check which slots are booked
-        $bookings = $this->bookings()
-            ->where('date', $date)
-            ->where(function($query) {
-                $query->where('sub_facility_id', null)
-                      ->orWhere('sub_facility_id', 0);
-            })
+        // Get all bookings for the specific date that match this facility
+        // We only need to check bookings for this specific facility (not sub-facilities)
+        $bookings = Booking::where('date', $date)
+            ->where('facility_id', $this->id)
+            ->whereNull('sub_facility_id') // Only include bookings that don't specify a sub-facility
+            ->whereIn('status', ['pending', 'approved']) // Only consider pending and approved bookings
             ->get();
         
         foreach ($bookings as $booking) {

@@ -179,7 +179,9 @@ class FacilityBooking extends Component
                 
                 // Check which slots are booked for this sub-facility
                 $bookings = Booking::where('date', $this->selectedDate)
+                    ->where('facility_id', $this->facility->id)
                     ->where('sub_facility_id', $this->subFacility->id)
+                    ->whereIn('status', ['pending', 'approved'])
                     ->get();
                     
                 // Add booking count to debug
