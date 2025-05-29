@@ -22,11 +22,26 @@ class BookingsList extends Component
 
     public function render()
     {
-        $query = Booking::with(['facility', 'subFacility', 'user', 'addons']);
+        // Base query builder
+        $baseQuery = Booking::with(['facility', 'subFacility', 'user', 'addons']);
+        
+        // Get counts for dashboard stats
+        $pendingCount = Booking::where('status', 'pending')->count();
+        $todayCount = Booking::whereDate('date', Carbon::today())->count();
+        $weekCount = Booking::whereBetween('date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
+        
+        // For separate pending bookings display
+        $hasPendingBookings = $pendingCount > 0;
+        
+        // Create a query for the main bookings
+        $query = clone $baseQuery;
         
         // Filter by status if provided
         if ($this->status && in_array($this->status, ['pending', 'approved', 'rejected', 'cancelled'])) {
             $query->where('status', $this->status);
+        } else if ($this->status === '' && $hasPendingBookings) {
+            // If no status filter and there are pending bookings, exclude them from main table
+            $query->where('status', '!=', 'pending');
         }
         
         // Filter by date range
@@ -60,19 +75,51 @@ class BookingsList extends Component
             });
         }
         
+        // Get pending bookings for the separate table
+        $pendingBookingsQuery = clone $baseQuery;
+        $pendingBookingsQuery->where('status', 'pending');
+        
+        // Apply date range and search to pending bookings too
+        switch ($this->dateRange) {
+            case 'day':
+                $pendingBookingsQuery->whereDate('date', Carbon::today());
+                break;
+            case 'week':
+                $pendingBookingsQuery->whereBetween('date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                break;
+            case 'month':
+                $pendingBookingsQuery->whereMonth('date', Carbon::now()->month)
+                      ->whereYear('date', Carbon::now()->year);
+                break;
+        }
+        
+        if (!empty($this->search)) {
+            $pendingBookingsQuery->where(function($q) {
+                $q->whereHas('user', function($query) {
+                    $query->where('name', 'like', '%' . $this->search . '%')
+                        ->orWhere('email', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('facility', function($query) {
+                    $query->where('name', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('subFacility', function($query) {
+                    $query->where('name', 'like', '%' . $this->search . '%');
+                })
+                ->orWhere('notes', 'like', '%' . $this->search . '%');
+            });
+        }
+        
         // Order by booking date
         $bookings = $query->orderBy('date')->orderBy('start_time')->paginate(10);
-        
-        // Get counts for dashboard stats
-        $pendingCount = Booking::where('status', 'pending')->count();
-        $todayCount = Booking::whereDate('date', Carbon::today())->count();
-        $weekCount = Booking::whereBetween('date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
+        $pendingBookings = $pendingBookingsQuery->orderBy('date')->orderBy('start_time')->get();
             
         return view('livewire.admin.bookings.bookings-list', [
             'bookings' => $bookings,
+            'pendingBookings' => $pendingBookings,
             'pendingCount' => $pendingCount,
             'todayCount' => $todayCount,
-            'weekCount' => $weekCount
+            'weekCount' => $weekCount,
+            'hasPendingBookings' => $hasPendingBookings
         ]);
     }
 

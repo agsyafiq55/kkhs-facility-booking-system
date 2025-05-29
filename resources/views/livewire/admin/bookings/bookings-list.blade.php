@@ -94,7 +94,99 @@
 
         <flux:separator variant="subtle" class="mb-6" />
 
-        <!-- Bookings Table -->
+        <!-- Pending Bookings Table -->
+        @if($hasPendingBookings)
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <flux:heading size="lg" level="2" class="flex items-center">
+                    <span class="text-amber-500 mr-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </span>
+                    Pending Bookings ({{ $pendingCount }})
+                </flux:heading>
+            </div>
+            
+            <div class="bg-amber-50 dark:bg-amber-900/20 overflow-hidden shadow-sm rounded-lg border border-amber-200 dark:border-amber-800">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-amber-200 dark:divide-amber-800">
+                        <thead class="bg-amber-100 dark:bg-amber-900/30">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-amber-700 dark:text-amber-300 uppercase tracking-wider">Facility</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-amber-700 dark:text-amber-300 uppercase tracking-wider">User</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-amber-700 dark:text-amber-300 uppercase tracking-wider">Date & Time</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-amber-700 dark:text-amber-300 uppercase tracking-wider">Purpose</th>
+                                <th class="px-6 py-3 text-center text-xs font-medium text-amber-700 dark:text-amber-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-zinc-800 divide-y divide-amber-200 dark:divide-amber-800">
+                            @foreach ($pendingBookings as $booking)
+                            <tr class="hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->facility->name }}</div>
+                                    @if($booking->subFacility)
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $booking->subFacility->name }}</div>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 dark:text-white">{{ $booking->user->name }}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $booking->user->email }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 dark:text-white">{{ $booking->date->format('d M Y') }}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} -
+                                        {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="max-w-xs truncate text-sm text-gray-500 dark:text-gray-400">
+                                        {{ $booking->notes ?: 'No purpose specified' }}
+                                    </div>
+                                    <flux:modal.trigger name="admin-view-purpose-pending-{{ $booking->id }}">
+                                        <flux:button variant="filled" size="xs" class="mt-1">
+                                            View Details
+                                        </flux:button>
+                                    </flux:modal.trigger>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    <div class="flex items-center justify-center space-x-2">
+                                        <flux:tooltip content="Approve">
+                                            <flux:button wire:click="approveBooking({{ $booking->id }})" variant="primary" class="p-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </flux:button>
+                                        </flux:tooltip>
+                                        
+                                        <flux:tooltip content="Reject">
+                                            <flux:button wire:click="rejectBooking({{ $booking->id }})" variant="danger" class="p-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </flux:button>
+                                        </flux:tooltip>
+                                        
+                                        <flux:tooltip content="Edit">
+                                            <flux:button href="{{ route('admin.bookings.edit', $booking) }}" wire:navigate variant="ghost">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                                </svg>
+                                            </flux:button>
+                                        </flux:tooltip>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- All Bookings Table -->
         <div class="flex items-center justify-between mb-4">
             <flux:heading size="lg" level="2">
                 @if($dateRange == 'day')
@@ -387,6 +479,99 @@
                         Approve Instead
                     </flux:button>
                     @endif
+                </div>
+            </div>
+        </div>
+    </flux:modal>
+    @endforeach
+
+    <!-- Pending Bookings Modals -->
+    @foreach($pendingBookings as $booking)
+    <!-- Purpose Detail Modal for Pending Bookings -->
+    <flux:modal name="admin-view-purpose-pending-{{ $booking->id }}" class="md:w-[500px]">
+        <div class="space-y-6">
+            <!-- Header with Status Badge -->
+            <div class="border-b border-amber-200 dark:border-amber-800 pb-4">
+                <flux:heading size="lg">Pending Booking Details</flux:heading>
+                <div class="mt-2">
+                    <flux:badge color="amber">Pending</flux:badge>
+                </div>
+            </div>
+
+            <!-- Booking ID and Date -->
+            <div class="bg-amber-50 dark:bg-amber-900/10 p-3 rounded-lg border border-amber-200 dark:border-amber-800">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-xs text-amber-700 dark:text-amber-400 uppercase font-medium">Booking ID</div>
+                        <div class="text-sm font-medium text-gray-900 dark:text-white">#{{ $booking->id }}</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-amber-700 dark:text-amber-400 uppercase font-medium">Created On</div>
+                        <div class="text-sm text-gray-900 dark:text-white">{{ $booking->created_at->format('M d, Y') }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Booking Information -->
+            <div class="space-y-4">
+                <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Facility</div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->facility->name }}</div>
+                    @if ($booking->subFacility)
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $booking->subFacility->name }}</div>
+                    @endif
+                </div>
+                
+                <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Date & Time</div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->date->format('F d, Y') }}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} - 
+                        {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Booked By</div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->user->name }}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $booking->user->email }}</div>
+                </div>
+                
+                @if ($booking->addons->count() > 0)
+                <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Add-ons</div>
+                    <ul class="text-sm text-gray-900 dark:text-white space-y-1">
+                        @foreach ($booking->addons as $addon)
+                        <li class="flex justify-between">
+                            <span>{{ $addon->name }}</span>
+                            @if ($addon->pivot->quantity > 1)
+                            <span class="text-gray-500 dark:text-gray-400">x{{ $addon->pivot->quantity }}</span>
+                            @endif
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+            </div>
+            
+            <!-- Purpose/Notes Section -->
+            <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
+                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Purpose</div>
+                <div class="text-sm">
+                    {{ $booking->notes ?: 'No purpose specified' }}
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-between pt-4 border-t border-amber-200 dark:border-amber-800">
+                <div class="flex gap-2 w-full">
+                    <flux:button wire:click="approveBooking({{ $booking->id }})" variant="primary" class="flex-1">
+                        Approve Booking
+                    </flux:button>
+                    
+                    <flux:button wire:click="rejectBooking({{ $booking->id }})" variant="danger" class="flex-1">
+                        Reject
+                    </flux:button>
                 </div>
             </div>
         </div>

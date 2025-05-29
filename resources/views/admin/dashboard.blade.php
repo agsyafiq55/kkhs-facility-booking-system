@@ -112,11 +112,11 @@
                         <flux:button variant="primary" href="{{ route('admin.bookings.index') }}" class="w-full">
                             Manage Bookings
                         </flux:button>
-                        <flux:button variant="primary" class="w-full">
+                        <flux:button variant="filled" class="w-full">
                             Manage Users (Coming Soon)
                         </flux:button>
                         <flux:button variant="filled" class="w-full">
-                            Generate Reports
+                            Generate Reports (Coming Soon)
                         </flux:button>
                     </div>
                 </div>
