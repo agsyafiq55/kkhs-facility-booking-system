@@ -25,7 +25,7 @@ class FacilityBooking extends Component
     public array $addonQuantities = [];
     
     protected $rules = [
-        'selectedDate' => 'required|date|after_or_equal:today',
+        'selectedDate' => 'required|date|after:today',
         'selectedTimeSlots' => 'required|array|min:1',
         'purpose' => 'required|string|max:500',
         'selectedAddons' => 'array',
@@ -36,7 +36,7 @@ class FacilityBooking extends Component
     {
         $this->facility = $facility;
         $this->subFacility = $subFacility;
-        $this->selectedDate = Carbon::today()->format('Y-m-d');
+        $this->selectedDate = Carbon::tomorrow()->format('Y-m-d');
         
         // Load available add-ons if the facility has add-ons
         if ($this->facility->has_addons) {
