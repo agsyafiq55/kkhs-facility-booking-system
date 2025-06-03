@@ -109,9 +109,9 @@ class BookingsList extends Component
             });
         }
         
-        // Order by booking date
-        $bookings = $query->orderBy('date')->orderBy('start_time')->paginate(10);
-        $pendingBookings = $pendingBookingsQuery->orderBy('date')->orderBy('start_time')->get();
+        // Order by booking date (most recent first)
+        $bookings = $query->orderBy('date', 'desc')->orderBy('start_time')->paginate(10);
+        $pendingBookings = $pendingBookingsQuery->orderBy('date', 'desc')->orderBy('start_time')->get();
             
         return view('livewire.admin.bookings.bookings-list', [
             'bookings' => $bookings,
@@ -192,7 +192,7 @@ class BookingsList extends Component
                 break;
         }
         
-        $bookings = $query->orderBy('date')->orderBy('start_time')->get();
+        $bookings = $query->orderBy('date', 'desc')->orderBy('start_time')->get();
         
         // Prepare CSV data
         $csvData = [

@@ -113,16 +113,52 @@
                     <table class="min-w-full divide-y divide-amber-200 dark:divide-amber-800">
                         <thead class="bg-amber-100 dark:bg-amber-900/30">
                             <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-amber-700 dark:text-amber-300 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-amber-700 dark:text-amber-300 uppercase tracking-wider">Time</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-amber-700 dark:text-amber-300 uppercase tracking-wider">Facility</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-amber-700 dark:text-amber-300 uppercase tracking-wider">User</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-amber-700 dark:text-amber-300 uppercase tracking-wider">Date & Time</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-amber-700 dark:text-amber-300 uppercase tracking-wider">Purpose</th>
                                 <th class="px-6 py-3 text-center text-xs font-medium text-amber-700 dark:text-amber-300 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-zinc-800 divide-y divide-amber-200 dark:divide-amber-800">
+                            @php 
+                                $pendingCurrentWeekNumber = null;
+                                $pendingAlternateColor = true;
+                                $pendingCurrentDate = null;
+                            @endphp
                             @foreach ($pendingBookings as $booking)
-                            <tr class="hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors">
+                                @php
+                                    $bookingWeekNumber = $booking->date->weekOfYear;
+                                    $bookingDate = $booking->date->format('Y-m-d');
+                                    
+                                    // Reset color alternation when week changes
+                                    if ($pendingCurrentWeekNumber !== $bookingWeekNumber) {
+                                        $pendingCurrentWeekNumber = $bookingWeekNumber;
+                                        $pendingAlternateColor = !$pendingAlternateColor;
+                                    }
+                                    
+                                    $rowClass = $pendingAlternateColor 
+                                        ? 'bg-white dark:bg-zinc-800 hover:bg-amber-50 dark:hover:bg-amber-900/10' 
+                                        : 'bg-amber-50/50 dark:bg-amber-900/5 hover:bg-amber-50 dark:hover:bg-amber-900/10';
+                                    
+                                    $showDate = $pendingCurrentDate !== $bookingDate;
+                                    if ($showDate) {
+                                        $pendingCurrentDate = $bookingDate;
+                                    }
+                                @endphp
+                            <tr class="{{ $rowClass }} transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($showDate)
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->date->format('l, d M Y') }}</div>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 dark:text-white">
+                                        {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} -
+                                        {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
+                                    </div>
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->facility->name }}</div>
                                     @if($booking->subFacility)
@@ -132,13 +168,6 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900 dark:text-white">{{ $booking->user->name }}</div>
                                     <div class="text-xs text-gray-500 dark:text-gray-400">{{ $booking->user->email }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900 dark:text-white">{{ $booking->date->format('l, d M Y') }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">
-                                        {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} -
-                                        {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
-                                    </div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="max-w-xs truncate text-sm text-gray-500 dark:text-gray-400">
@@ -218,17 +247,53 @@
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-zinc-700">
                     <thead class="bg-gray-50 dark:bg-zinc-900">
                         <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Time</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Facility</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date & Time</th>
                             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Purpose</th>
                             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-zinc-800 divide-y divide-gray-200 dark:divide-zinc-700">
+                        @php 
+                            $currentWeekNumber = null;
+                            $alternateColor = true;
+                            $currentDate = null;
+                        @endphp
                         @forelse ($bookings as $booking)
-                        <tr class="hover:bg-gray-50 dark:hover:bg-zinc-700/50 transition-colors">
+                            @php
+                                $bookingWeekNumber = $booking->date->weekOfYear;
+                                $bookingDate = $booking->date->format('Y-m-d');
+                                
+                                // Reset color alternation when week changes
+                                if ($currentWeekNumber !== $bookingWeekNumber) {
+                                    $currentWeekNumber = $bookingWeekNumber;
+                                    $alternateColor = !$alternateColor;
+                                }
+                                
+                                $rowClass = $alternateColor 
+                                    ? 'bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700/50' 
+                                    : 'bg-gray-50 dark:bg-zinc-700/30 hover:bg-gray-100 dark:hover:bg-zinc-700/60';
+                                
+                                $showDate = $currentDate !== $bookingDate;
+                                if ($showDate) {
+                                    $currentDate = $bookingDate;
+                                }
+                            @endphp
+                        <tr class="{{ $rowClass }} transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($showDate)
+                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->date->format('l, d M Y') }}</div>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900 dark:text-white">
+                                    {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} -
+                                    {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
+                                </div>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->facility->name }}</div>
                                 @if($booking->subFacility)
@@ -238,13 +303,6 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-900 dark:text-white">{{ $booking->user->name }}</div>
                                 <div class="text-xs text-gray-500 dark:text-gray-400">{{ $booking->user->email }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900 dark:text-white">{{ $booking->date->format('l, d M Y') }}</div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400">
-                                    {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} -
-                                    {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
-                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 @switch($booking->status)

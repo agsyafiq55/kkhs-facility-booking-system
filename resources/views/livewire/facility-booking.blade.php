@@ -12,17 +12,14 @@
             <flux:field>
                 <flux:text>Select Date</flux:text>
                 <flux:input type="date" wire:model.live="selectedDate" min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}" />
-                @if($selectedDate)
-                <div class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    {{ \Carbon\Carbon::parse($selectedDate)->format('l, F d, Y') }}
-                </div>
-                @endif
             </flux:field>
         </div>
 
         <div class="mb-4">
-            <flux:heading size="sm" class="mb-2">Choose Time Slots</flux:heading>
-
+            <div class="mb-2">
+                <span class="text-sm text-gray-500 dark:text-gray-300">Available Slots on</span>
+                <span class="text-sm font-bold"> {{ \Carbon\Carbon::parse($selectedDate)->format('l, F d, Y') }}</span>
+            </div>
             @if (count($availableTimeSlots) > 0)
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                 @foreach ($availableTimeSlots as $index => $slot)
@@ -90,8 +87,7 @@
                             wire:model.live="addonQuantities.{{ $addon['id'] }}"
                             min="1"
                             max="{{ $addon['quantity_available'] > 0 ? $addon['quantity_available'] : 999 }}"
-                            class="w-16 text-center rounded-md border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:border-sky-500 focus:ring-sky-500 text-sm"
-                        />
+                            class="w-16 text-center rounded-md border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:border-sky-500 focus:ring-sky-500 text-sm" />
                     </div>
                     @endif
                 </div>
