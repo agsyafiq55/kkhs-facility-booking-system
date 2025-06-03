@@ -12,6 +12,11 @@
             <flux:field>
                 <flux:text>Select Date</flux:text>
                 <flux:input type="date" wire:model.live="selectedDate" min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}" />
+                @if($selectedDate)
+                <div class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    {{ \Carbon\Carbon::parse($selectedDate)->format('l, F d, Y') }}
+                </div>
+                @endif
             </flux:field>
         </div>
 

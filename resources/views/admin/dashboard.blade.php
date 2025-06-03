@@ -213,7 +213,7 @@
                                         {{ $booking->facility->name }}
                                     </p>
                                     <p class="text-xs text-gray-500 dark:text-gray-400">
-                                        {{ $booking->user->name }} • {{ Carbon\Carbon::parse($booking->date)->format('M j, Y') }}
+                                        {{ $booking->user->name }} • {{ Carbon\Carbon::parse($booking->date)->format('l, M j, Y') }}
                                     </p>
                                 </div>
                                 <div>

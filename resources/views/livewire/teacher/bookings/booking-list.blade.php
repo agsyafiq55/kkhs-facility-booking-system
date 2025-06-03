@@ -61,7 +61,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-neutral-400">
-                                {{ $booking->date->format('M d, Y') }}
+                                {{ $booking->date->format('l, M d, Y') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-neutral-400">
                                 {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} - 
@@ -145,7 +145,7 @@
                         <div>
                             <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Date & Time</div>
                             <div class="mt-1 text-gray-900 dark:text-white">
-                                {{ $booking->date->format('F d, Y') }}<br>
+                                {{ $booking->date->format('l, F d, Y') }}<br>
                                 {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} - 
                                 {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
                             </div>

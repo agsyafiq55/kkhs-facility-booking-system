@@ -134,7 +134,7 @@
                                     <div class="text-xs text-gray-500 dark:text-gray-400">{{ $booking->user->email }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900 dark:text-white">{{ $booking->date->format('d M Y') }}</div>
+                                    <div class="text-sm text-gray-900 dark:text-white">{{ $booking->date->format('l, d M Y') }}</div>
                                     <div class="text-xs text-gray-500 dark:text-gray-400">
                                         {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} -
                                         {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
@@ -240,7 +240,7 @@
                                 <div class="text-xs text-gray-500 dark:text-gray-400">{{ $booking->user->email }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900 dark:text-white">{{ $booking->date->format('d M Y') }}</div>
+                                <div class="text-sm text-gray-900 dark:text-white">{{ $booking->date->format('l, d M Y') }}</div>
                                 <div class="text-xs text-gray-500 dark:text-gray-400">
                                     {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} -
                                     {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
@@ -402,7 +402,7 @@
                     </div>
                     <div>
                         <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium">Created On</div>
-                        <div class="text-sm text-gray-900 dark:text-white">{{ $booking->created_at->format('M d, Y') }}</div>
+                        <div class="text-sm text-gray-900 dark:text-white">{{ $booking->created_at->format('l, M d, Y') }}</div>
                     </div>
                 </div>
             </div>
@@ -419,7 +419,7 @@
                 
                 <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
                     <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Date & Time</div>
-                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->date->format('F d, Y') }}</div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->date->format('l, F d, Y') }}</div>
                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} - 
                         {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}
@@ -507,7 +507,7 @@
                     </div>
                     <div>
                         <div class="text-xs text-amber-700 dark:text-amber-400 uppercase font-medium">Created On</div>
-                        <div class="text-sm text-gray-900 dark:text-white">{{ $booking->created_at->format('M d, Y') }}</div>
+                        <div class="text-sm text-gray-900 dark:text-white">{{ $booking->created_at->format('l, M d, Y') }}</div>
                     </div>
                 </div>
             </div>
@@ -524,7 +524,7 @@
                 
                 <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
                     <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Date & Time</div>
-                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->date->format('F d, Y') }}</div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $booking->date->format('l, F d, Y') }}</div>
                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {{ \Carbon\Carbon::parse($booking->start_time)->format('g:i A') }} - 
                         {{ \Carbon\Carbon::parse($booking->end_time)->format('g:i A') }}

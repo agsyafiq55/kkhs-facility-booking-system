@@ -43,7 +43,7 @@
 
                         <div class="flex flex-col">
                             <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Date</span>
-                            <span class="text-gray-900 dark:text-white">{{ $booking->date->format('d M Y') }}</span>
+                            <span class="text-gray-900 dark:text-white">{{ $booking->date->format('l, d M Y') }}</span>
                         </div>
 
                         <div class="flex flex-col">
@@ -56,7 +56,7 @@
 
                         <div class="flex flex-col">
                             <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Created At</span>
-                            <span class="text-gray-900 dark:text-white">{{ $booking->created_at->format('d M Y, g:i A') }}</span>
+                            <span class="text-gray-900 dark:text-white">{{ $booking->created_at->format('l, d M Y, g:i A') }}</span>
                         </div>
 
                         <div class="flex flex-col">
