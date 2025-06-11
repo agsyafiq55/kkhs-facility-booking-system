@@ -230,74 +230,93 @@
                     </div>
                 </div>
 
-                <!-- Facility Status -->
+                <!-- Popular Booking Insights -->
                 <div class="bg-neutral-50 dark:bg-zinc-900 p-6 rounded-lg shadow-sm">
                     <div class="flex justify-between items-center mb-4">
-                        <flux:heading size="lg">Facility Status</flux:heading>
+                        <flux:heading size="lg">Popular Booking Insights</flux:heading>
                     </div>
                     
                     @php
-                        $facilities = \App\Models\Facility::withCount('bookings')
-                            ->orderBy('bookings_count', 'desc')
-                            ->take(5)
+                        // Get popular booking days
+                        $popularDays = \App\Models\Booking::select(DB::raw('DAYOFWEEK(date) as day, COUNT(*) as count'))
+                            ->groupBy('day')
+                            ->orderBy('day', 'asc')
                             ->get();
+                            
+                        // Map day numbers to day names
+                        $dayNames = [
+                            1 => 'Sunday', 
+                            2 => 'Monday', 
+                            3 => 'Tuesday', 
+                            4 => 'Wednesday', 
+                            5 => 'Thursday', 
+                            6 => 'Friday', 
+                            7 => 'Saturday'
+                        ];
+                        
+                        // Prepare day data for chart
+                        $dayLabels = [];
+                        $dayData = [];
+                        foreach (range(1, 7) as $dayNum) {
+                            $dayLabels[] = $dayNames[$dayNum];
+                            $count = 0;
+                            foreach ($popularDays as $day) {
+                                if ($day->day == $dayNum) {
+                                    $count = $day->count;
+                                    break;
+                                }
+                            }
+                            $dayData[] = $count;
+                        }
+                        
+                        // Get popular booking time slots
+                        $popularTimes = \App\Models\Booking::select(DB::raw('HOUR(start_time) as hour, COUNT(*) as count'))
+                            ->groupBy('hour')
+                            ->orderBy('hour', 'asc')
+                            ->get();
+                            
+                        // Prepare time data for chart
+                        $timeLabels = [];
+                        $timeData = [];
+                        
+                        // Create 24-hour array with labels and data
+                        foreach (range(0, 23) as $hour) {
+                            $timeLabels[] = date('g:i A', strtotime($hour . ':00'));
+                            $count = 0;
+                            foreach ($popularTimes as $time) {
+                                if ($time->hour == $hour) {
+                                    $count = $time->count;
+                                    break;
+                                }
+                            }
+                            $timeData[] = $count;
+                        }
                     @endphp
 
-                    <div class="space-y-4">
-                        @foreach($facilities as $facility)
-                            <div>
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ $facility->name }}</span>
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ $facility->bookings_count }} bookings</span>
-                                </div>
-                                
-                                {{-- Calculate percentage based on booking count --}}
-                                @php
-                                    $percentage = min(100, ($facility->bookings_count / 10) * 100);
-                                @endphp
-                                
-                                {{-- Fixed progress bar implementation --}}
-                                <div class="grid grid-cols-10 gap-1 mt-1 mb-2">
-                                    @php
-                                        // Calculate filled segments (0-10)
-                                        $filledSegments = min(10, round($facility->bookings_count));
-                                        
-                                        // Determine color based on usage
-                                        if ($filledSegments > 7) {
-                                            $segmentColor = 'bg-green-600';
-                                        } elseif ($filledSegments > 4) {
-                                            $segmentColor = 'bg-blue-600';
-                                        } elseif ($filledSegments > 2) {
-                                            $segmentColor = 'bg-amber-500';
-                                        } else {
-                                            $segmentColor = 'bg-red-500';
-                                        }
-                                    @endphp
-                                    
-                                    @for($i = 1; $i <= 10; $i++)
-                                        @if($i <= $filledSegments)
-                                            <div class="{{ $segmentColor }} h-2 rounded-sm"></div>
-                                        @else
-                                            <div class="bg-gray-200 dark:bg-zinc-700 h-2 rounded-sm"></div>
-                                        @endif
-                                    @endfor
-                                </div>
-                                
-                                <div class="mt-2 text-right">
-                                    <flux:button variant="ghost" size="xs" href="{{ route('admin.facilities.edit', $facility) }}">
-                                        Manage
-                                    </flux:button>
-                                </div>
-                            </div>
-                        @endforeach
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Popular Days Chart -->
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Popular Booking Days</h3>
+                            <div id="days-chart" class="h-64" 
+                                data-labels="{{ implode(',', $dayLabels) }}"
+                                data-values="{{ implode(',', $dayData) }}"></div>
+                        </div>
+                        
+                        <!-- Popular Times Chart -->
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Popular Booking Hours</h3>
+                            <div id="hours-chart" class="h-64"
+                                data-labels="{{ implode(',', $timeLabels) }}"
+                                data-values="{{ implode(',', $timeData) }}"></div>
+                        </div>
                     </div>
 
                     <div class="mt-6">
                         <flux:callout icon="information-circle">
-                            <flux:callout.heading>Need maintenance?</flux:callout.heading>
+                            <flux:callout.heading>Booking Trends</flux:callout.heading>
                             <flux:callout.text>
-                                Facilities requiring attention can be marked for maintenance in the facility management section.
-                                <flux:callout.link href="{{ route('admin.facilities.index') }}">Manage Facilities</flux:callout.link>
+                                Use this data to optimize facility availability during peak hours and days.
+                                <flux:callout.link href="{{ route('admin.bookings.index') }}">View All Bookings</flux:callout.link>
                             </flux:callout.text>
                         </flux:callout>
                     </div>
@@ -305,4 +324,192 @@
             </div>
         </div>
     </div>
+
+    <!-- ApexCharts.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    
+    <!-- Dashboard Charts Initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Parse data from HTML attributes
+            var daysChartEl = document.getElementById('days-chart');
+            var hoursChartEl = document.getElementById('hours-chart');
+            
+            var dayLabels = daysChartEl.getAttribute('data-labels').split(',');
+            var dayData = daysChartEl.getAttribute('data-values').split(',').map(Number);
+            
+            var timeLabels = hoursChartEl.getAttribute('data-labels').split(',');
+            var timeData = hoursChartEl.getAttribute('data-values').split(',').map(Number);
+            
+            // Days Chart
+            const daysOptions = {
+                series: [{
+                    name: 'Bookings',
+                    data: dayData
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 250,
+                    toolbar: {
+                        show: false
+                    },
+                    fontFamily: 'inherit',
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        columnWidth: '60%',
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                xaxis: {
+                    categories: dayLabels,
+                    labels: {
+                        style: {
+                            colors: '#6b7280',
+                            fontFamily: 'inherit'
+                        }
+                    },
+                    axisBorder: {
+                        show: false
+                    },
+                    axisTicks: {
+                        show: false
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: '#6b7280',
+                            fontFamily: 'inherit'
+                        }
+                    }
+                },
+                colors: ['#3b82f6'],
+                grid: {
+                    borderColor: '#e2e8f0',
+                    strokeDashArray: 4,
+                    yaxis: {
+                        lines: {
+                            show: true
+                        }
+                    },
+                    padding: {
+                        left: 10,
+                        right: 10
+                    }
+                },
+                tooltip: {
+                    theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+                }
+            };
+
+            const daysChart = new ApexCharts(daysChartEl, daysOptions);
+            daysChart.render();
+            
+            // Hours Chart
+            const hoursOptions = {
+                series: [{
+                    name: 'Bookings',
+                    data: timeData
+                }],
+                chart: {
+                    type: 'area',
+                    height: 250,
+                    toolbar: {
+                        show: false
+                    },
+                    fontFamily: 'inherit',
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 2
+                },
+                xaxis: {
+                    categories: timeLabels,
+                    labels: {
+                        style: {
+                            colors: '#6b7280',
+                            fontFamily: 'inherit'
+                        },
+                        formatter: function(value) {
+                            // Only show every 3 hours to avoid crowding
+                            var hourIndex = timeLabels.indexOf(value);
+                            return hourIndex % 3 === 0 ? value : '';
+                        }
+                    },
+                    axisBorder: {
+                        show: false
+                    },
+                    axisTicks: {
+                        show: false
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: '#6b7280',
+                            fontFamily: 'inherit'
+                        }
+                    }
+                },
+                colors: ['#8b5cf6'],
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.4,
+                        opacityTo: 0.1,
+                        stops: [0, 100]
+                    }
+                },
+                grid: {
+                    borderColor: '#e2e8f0',
+                    strokeDashArray: 4,
+                    yaxis: {
+                        lines: {
+                            show: true
+                        }
+                    },
+                    padding: {
+                        left: 10,
+                        right: 10
+                    }
+                },
+                tooltip: {
+                    theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+                }
+            };
+
+            const hoursChart = new ApexCharts(hoursChartEl, hoursOptions);
+            hoursChart.render();
+            
+            // Handle dark mode toggle
+            const darkModeObserver = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === 'class') {
+                        const isDarkMode = document.documentElement.classList.contains('dark');
+                        
+                        // Update charts theme
+                        daysChart.updateOptions({
+                            tooltip: { theme: isDarkMode ? 'dark' : 'light' },
+                            grid: { borderColor: isDarkMode ? '#374151' : '#e2e8f0' }
+                        });
+                        
+                        hoursChart.updateOptions({
+                            tooltip: { theme: isDarkMode ? 'dark' : 'light' },
+                            grid: { borderColor: isDarkMode ? '#374151' : '#e2e8f0' }
+                        });
+                    }
+                });
+            });
+            
+            darkModeObserver.observe(document.documentElement, { attributes: true });
+        });
+    </script>
 </x-layouts.app> 
