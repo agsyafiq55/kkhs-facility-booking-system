@@ -25,18 +25,36 @@ class FacilityBooking extends Component
     public array $addonQuantities = [];
     
     protected $rules = [
-        'selectedDate' => 'required|date|after:today',
+        'selectedDate' => 'required|date',
         'selectedTimeSlots' => 'required|array|min:1',
         'purpose' => 'required|string|max:500',
         'selectedAddons' => 'array',
         'addonQuantities.*' => 'integer|min:1',
     ];
     
+    /**
+     * Get the validation rules with dynamic attributes based on the facility
+     */
+    protected function getValidationRules()
+    {
+        $rules = $this->rules;
+        
+        // Set the minimum date based on the facility's booking rule
+        $bookingRule = $this->facility->booking_rule ?? 1;
+        $minDate = Carbon::now()->addDays($bookingRule)->format('Y-m-d');
+        $rules['selectedDate'] = "required|date|after_or_equal:{$minDate}";
+        
+        return $rules;
+    }
+    
     public function mount(Facility $facility, ?SubFacility $subFacility = null)
     {
         $this->facility = $facility;
         $this->subFacility = $subFacility;
-        $this->selectedDate = Carbon::tomorrow()->format('Y-m-d');
+        
+        // Calculate the minimum booking date based on the facility's booking rule
+        $bookingRule = $facility->booking_rule ?? 1;
+        $this->selectedDate = Carbon::now()->addDays($bookingRule)->format('Y-m-d');
         
         // Load available add-ons if the facility has add-ons
         if ($this->facility->has_addons) {
@@ -120,6 +138,14 @@ class FacilityBooking extends Component
     
     public function updatedSelectedDate()
     {
+        // Enforce booking rule: can't book earlier than facility's booking rule allows
+        $bookingRule = $this->facility->booking_rule ?? 1;
+        $minDate = Carbon::now()->addDays($bookingRule)->format('Y-m-d');
+        
+        if ($this->selectedDate < $minDate) {
+            $this->selectedDate = $minDate;
+        }
+        
         $this->loadTimeSlots();
         $this->selectedTimeSlots = [];
     }
@@ -281,7 +307,7 @@ class FacilityBooking extends Component
     
     public function bookFacility()
     {
-        $this->validate();
+        $this->validate($this->getValidationRules());
         
         // Sort selected time slots
         sort($this->selectedTimeSlots);

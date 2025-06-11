@@ -1,10 +1,7 @@
 <div>
     <div class="bg-white dark:bg-zinc-900 rounded-lg shadow p-4 mt-6">
         <flux:callout icon="clock" class="mb-4">
-            <flux:callout.heading>Booking Rule</flux:callout.heading>
-            <flux:callout.text>
-                Bookings must be made at least 1 day prior to the requested date. Same-day bookings are not allowed.
-            </flux:callout.text>
+            <flux:callout.heading>Bookings must be made at least {{ $facility->booking_rule ?? 1 }} day(s) prior to the requested date.</flux:callout.heading>
         </flux:callout>
 
         <div class="mb-4">
@@ -18,7 +15,7 @@
         <div class="mb-4">
             <flux:field>
                 <flux:text>Select Date</flux:text>
-                <flux:input type="date" wire:model.live="selectedDate" min="{{ \Carbon\Carbon::tomorrow()->format('Y-m-d') }}" />
+                <flux:input type="date" wire:model.live="selectedDate" min="{{ \Carbon\Carbon::now()->addDays($facility->booking_rule ?? 1)->format('Y-m-d') }}" />
             </flux:field>
         </div>
 

@@ -47,6 +47,14 @@
                             <small class="text-gray-500">Format: 5:00 PM</small>
                         </flux:field>
                     </div>
+                    
+                    <!-- Booking Rule -->
+                    <flux:field>
+                        <flux:text for="booking_rule">Booking Rule (Days)</flux:text>
+                        <flux:input id="booking_rule" wire:model="booking_rule" type="number" min="1" />
+                        <flux:error name="booking_rule" />
+                        <small class="text-gray-500">Minimum number of days before booking date that users can make reservations.</small>
+                    </flux:field>
 
                     <!-- Description -->
                     <flux:field>

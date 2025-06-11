@@ -41,6 +41,7 @@ class FacilityController extends Controller
             'has_sub_facilities' => 'boolean',
             'opening_time' => 'nullable|date_format:H:i',
             'closing_time' => 'nullable|date_format:H:i',
+            'booking_rule' => 'nullable|integer|min:1',
         ]);
 
         // Handle image upload
@@ -91,6 +92,7 @@ class FacilityController extends Controller
             'has_sub_facilities' => 'boolean',
             'opening_time' => 'nullable|date_format:H:i',
             'closing_time' => 'nullable|date_format:H:i',
+            'booking_rule' => 'nullable|integer|min:1',
         ]);
 
         // Handle image upload

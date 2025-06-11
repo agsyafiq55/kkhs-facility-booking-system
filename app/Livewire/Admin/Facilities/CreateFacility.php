@@ -40,6 +40,9 @@ class CreateFacility extends Component
     public $opening_time = null;
     public $closing_time = null;
     
+    #[Rule('nullable|integer|min:1')]
+    public $booking_rule = 1;
+    
     // Add-ons management
     public $addons = [];
     public $addonName = '';
@@ -206,6 +209,7 @@ class CreateFacility extends Component
             'has_sub_facilities' => 'boolean',
             'opening_time' => 'nullable|string',
             'closing_time' => 'nullable|string',
+            'booking_rule' => 'nullable|integer|min:1',
         ]);
         
         // Convert 12-hour format to 24-hour format for database storage

@@ -21,11 +21,13 @@ class Facility extends Model
         'has_sub_facilities',
         'opening_time',
         'closing_time',
+        'booking_rule',
     ];
     
     protected $casts = [
         'has_addons' => 'boolean',
         'has_sub_facilities' => 'boolean',
+        'booking_rule' => 'integer',
     ];
 
     /**

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('capacity')->nullable();
             $table->string('status')->default('available'); // available, maintenance, unavailable
             $table->string('image_path')->nullable();
+            $table->integer('booking_rule')->default(1); // Default: Bookings can be made at least 1 day prior
             $table->timestamps();
         });
     }

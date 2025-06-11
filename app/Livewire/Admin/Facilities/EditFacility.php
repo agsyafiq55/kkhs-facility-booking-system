@@ -34,6 +34,9 @@ class EditFacility extends Component
     public $opening_time = null;
     public $closing_time = null;
     
+    #[Rule('nullable|integer|min:1')]
+    public $booking_rule = 1;
+    
     public function mount(Facility $facility)
     {
         $this->facility = $facility;
@@ -41,6 +44,7 @@ class EditFacility extends Component
         $this->description = $facility->description;
         $this->capacity = $facility->capacity;
         $this->status = $facility->status;
+        $this->booking_rule = $facility->booking_rule ?? 1;
         
         // Format times to display in 12-hour format if they exist
         if ($facility->opening_time) {
@@ -67,6 +71,7 @@ class EditFacility extends Component
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'opening_time' => 'nullable|string',
             'closing_time' => 'nullable|string',
+            'booking_rule' => 'nullable|integer|min:1',
         ]);
         
         // Convert 12-hour format to 24-hour format for database storage
