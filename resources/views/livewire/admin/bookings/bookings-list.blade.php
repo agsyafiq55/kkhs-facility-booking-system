@@ -171,7 +171,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="max-w-xs truncate text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $booking->notes ?: 'No purpose specified' }}
+                                        {{ $booking->purpose ?: 'No purpose specified' }}
                                     </div>
                                     <flux:modal.trigger name="admin-view-purpose-pending-{{ $booking->id }}">
                                         <flux:button variant="filled" size="xs" class="mt-1">
@@ -348,7 +348,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="max-w-xs truncate text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $booking->notes ?: 'No purpose specified' }}
+                                    {{ $booking->purpose ?: 'No purpose specified' }}
                                 </div>
                                 <flux:modal.trigger name="admin-view-purpose-{{ $booking->id }}">
                                     <flux:button variant="filled" size="xs" class="mt-1">
@@ -511,9 +511,19 @@
             <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
                 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Purpose</div>
                 <div class="text-sm">
-                    {{ $booking->notes ?: 'No purpose specified' }}
+                    {{ $booking->purpose ?: 'No purpose specified' }}
                 </div>
             </div>
+            
+            @if($booking->special_requests)
+            <!-- Special Requests Section -->
+            <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
+                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Special Requests</div>
+                <div class="text-sm">
+                    {{ $booking->special_requests }}
+                </div>
+            </div>
+            @endif
 
             <!-- Action Buttons -->
             <div class="flex justify-between pt-4 border-t border-gray-200 dark:border-zinc-700">
@@ -616,9 +626,19 @@
             <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
                 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Purpose</div>
                 <div class="text-sm">
-                    {{ $booking->notes ?: 'No purpose specified' }}
+                    {{ $booking->purpose ?: 'No purpose specified' }}
                 </div>
             </div>
+            
+            @if($booking->special_requests)
+            <!-- Special Requests Section -->
+            <div class="bg-white dark:bg-zinc-900 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
+                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-1">Special Requests</div>
+                <div class="text-sm">
+                    {{ $booking->special_requests }}
+                </div>
+            </div>
+            @endif
 
             <!-- Action Buttons -->
             <div class="flex justify-between pt-4 border-t border-amber-200 dark:border-amber-800">

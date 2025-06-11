@@ -9,18 +9,21 @@ class EditBookings extends Component
 {
     public Booking $booking;
     public $status;
-    public $notes;
+    public $purpose;
+    public $specialRequests;
     
     protected $rules = [
         'status' => 'required|in:pending,approved,rejected,cancelled',
-        'notes' => 'nullable|string|max:500',
+        'purpose' => 'nullable|string|max:500',
+        'specialRequests' => 'nullable|string|max:500',
     ];
     
     public function mount(Booking $booking)
     {
         $this->booking = $booking;
         $this->status = $booking->status;
-        $this->notes = $booking->notes;
+        $this->purpose = $booking->purpose;
+        $this->specialRequests = $booking->special_requests;
     }
     
     public function updateBooking()
@@ -29,7 +32,8 @@ class EditBookings extends Component
         
         $this->booking->update([
             'status' => $this->status,
-            'notes' => $this->notes,
+            'purpose' => $this->purpose,
+            'special_requests' => $this->specialRequests,
         ]);
         
         session()->flash('success', 'Booking updated successfully.');

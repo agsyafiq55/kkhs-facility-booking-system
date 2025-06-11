@@ -17,6 +17,7 @@ class FacilityBooking extends Component
     public array $selectedTimeSlots = [];
     public array $availableTimeSlots = [];
     public string $purpose = '';
+    public string $specialRequests = '';
     public ?string $debug = null;
     
     // Add-ons related properties
@@ -28,6 +29,7 @@ class FacilityBooking extends Component
         'selectedDate' => 'required|date',
         'selectedTimeSlots' => 'required|array|min:1',
         'purpose' => 'required|string|max:500',
+        'specialRequests' => 'nullable|string|max:500',
         'selectedAddons' => 'array',
         'addonQuantities.*' => 'integer|min:1',
     ];
@@ -348,7 +350,8 @@ class FacilityBooking extends Component
                 'start_time' => $group['start'],
                 'end_time' => $group['end'],
                 'status' => 'pending',
-                'notes' => $this->purpose,
+                'purpose' => $this->purpose,
+                'special_requests' => $this->specialRequests,
             ]);
             
             // Attach selected add-ons to the booking
@@ -364,7 +367,7 @@ class FacilityBooking extends Component
         }
         
         session()->flash('message', 'Booking request submitted successfully!');
-        $this->reset(['selectedTimeSlots', 'purpose', 'selectedAddons', 'addonQuantities']);
+        $this->reset(['selectedTimeSlots', 'purpose', 'specialRequests', 'selectedAddons', 'addonQuantities']);
         
         // Reload available add-ons
         if ($this->facility->has_addons) {

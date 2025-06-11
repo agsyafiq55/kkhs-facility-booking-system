@@ -83,7 +83,7 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500 dark:text-neutral-400">
                                 <div class="max-w-xs truncate">
-                                    {{ $booking->notes ?: 'No purpose specified' }}
+                                    {{ $booking->purpose ?: 'No purpose specified' }}
                                 </div>
                                 <flux:modal.trigger name="view-purpose-{{ $booking->id }}">
                                     <flux:button variant="ghost" size="xs" class="mt-1">
@@ -163,9 +163,18 @@
                         <div>
                             <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Purpose</div>
                             <div class="mt-1 text-gray-900 dark:text-white">
-                                {{ $booking->notes ?: 'No purpose specified' }}
+                                {{ $booking->purpose ?: 'No purpose specified' }}
                             </div>
                         </div>
+                        
+                        @if($booking->special_requests)
+                        <div>
+                            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Special Requests</div>
+                            <div class="mt-1 text-gray-900 dark:text-white">
+                                {{ $booking->special_requests }}
+                            </div>
+                        </div>
+                        @endif
                         
                         @if ($booking->addons->count() > 0)
                             <div>

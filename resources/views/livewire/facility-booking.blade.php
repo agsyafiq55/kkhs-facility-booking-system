@@ -11,6 +11,15 @@
                 @error('purpose') <div class="mt-1 text-red-500 text-sm">{{ $message }}</div> @enderror
             </flux:field>
         </div>
+        
+        <div class="mb-4">
+            <flux:field>
+                <flux:text>Special Requests (Optional)</flux:text>
+                <flux:textarea wire:model="specialRequests" rows="2" placeholder="Any special requests or requirements not listed in add-ons"></flux:textarea>
+                @error('specialRequests') <div class="mt-1 text-red-500 text-sm">{{ $message }}</div> @enderror
+                <div class="mt-1 text-sm text-gray-500 dark:text-gray-400">Use this field for any special accommodations or requests not covered by the available add-ons.</div>
+            </flux:field>
+        </div>
 
         <div class="mb-4">
             <flux:field>

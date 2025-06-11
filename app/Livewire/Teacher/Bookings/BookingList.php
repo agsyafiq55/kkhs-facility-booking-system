@@ -51,7 +51,7 @@ class BookingList extends Component
                 ->orWhereHas('subFacility', function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%');
                 })
-                ->orWhere('notes', 'like', '%' . $this->search . '%');
+                ->orWhere('purpose', 'like', '%' . $this->search . '%');
             });
         }
         

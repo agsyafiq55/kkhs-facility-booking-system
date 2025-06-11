@@ -79,15 +79,28 @@
                             </div>
                         </div>
 
-                        @if($booking->notes)
-                        <div class="flex flex-col">
-                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Purpose</span>
-                            <p class="text-gray-900 dark:text-white mt-1 text-sm bg-gray-50 dark:bg-zinc-700 p-3 rounded-md">
-                                {{ $booking->notes }}
-                            </p>
+                        @if($booking->purpose)
+                        <div class="mt-4">
+                            <flux:heading size="sm">Booking Purpose</flux:heading>
+                            <div class="text-sm text-gray-600 dark:text-gray-300 mt-2 p-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
+                                {{ $booking->purpose }}
+                            </div>
                         </div>
+                        @else
+                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">No purpose specified.</div>
                         @endif
                         
+                        @if($booking->special_requests)
+                        <div class="mt-4">
+                            <flux:heading size="sm">Special Requests</flux:heading>
+                            <div class="text-sm text-gray-600 dark:text-gray-300 mt-2 p-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
+                                {{ $booking->special_requests }}
+                            </div>
+                        </div>
+                        @else
+                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">No special requests.</div>
+                        @endif
+
                         @if($booking->addons->count() > 0)
                         <div class="flex flex-col">
                             <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Selected Add-ons</span>
@@ -128,8 +141,14 @@
 
                         <flux:field>
                             <flux:label>Purpose of Booking</flux:label>
-                            <flux:textarea wire:model="notes" rows="4"></flux:textarea>
-                            <flux:error name="notes" />
+                            <flux:textarea wire:model="purpose" rows="4"></flux:textarea>
+                            <flux:error name="purpose" />
+                        </flux:field>
+
+                        <flux:field>
+                            <flux:label>Special Requests</flux:label>
+                            <flux:textarea wire:model="specialRequests" rows="4"></flux:textarea>
+                            <flux:error name="specialRequests" />
                         </flux:field>
 
                         <flux:separator variant="subtle" class="my-6" />

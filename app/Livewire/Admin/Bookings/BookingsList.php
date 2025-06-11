@@ -58,20 +58,17 @@ class BookingsList extends Component
                 break;
         }
         
-        // Search functionality
-        if (!empty($this->search)) {
+        // Filter by search term if provided
+        if ($this->search) {
             $query->where(function($q) {
-                $q->whereHas('user', function($query) {
-                    $query->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('email', 'like', '%' . $this->search . '%');
+                $q->whereHas('facility', function($subQuery) {
+                    $subQuery->where('name', 'like', '%' . $this->search . '%');
                 })
-                ->orWhereHas('facility', function($query) {
-                    $query->where('name', 'like', '%' . $this->search . '%');
+                ->orWhereHas('user', function($subQuery) {
+                    $subQuery->where('name', 'like', '%' . $this->search . '%')
+                             ->orWhere('email', 'like', '%' . $this->search . '%');
                 })
-                ->orWhereHas('subFacility', function($query) {
-                    $query->where('name', 'like', '%' . $this->search . '%');
-                })
-                ->orWhere('notes', 'like', '%' . $this->search . '%');
+                ->orWhere('purpose', 'like', '%' . $this->search . '%');
             });
         }
         
@@ -105,7 +102,7 @@ class BookingsList extends Component
                 ->orWhereHas('subFacility', function($query) {
                     $query->where('name', 'like', '%' . $this->search . '%');
                 })
-                ->orWhere('notes', 'like', '%' . $this->search . '%');
+                ->orWhere('purpose', 'like', '%' . $this->search . '%');
             });
         }
         
@@ -210,7 +207,7 @@ class BookingsList extends Component
                 $booking->start_time,
                 $booking->end_time,
                 $booking->status,
-                $booking->notes
+                $booking->purpose
             ];
         }
         

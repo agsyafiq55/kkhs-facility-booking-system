@@ -41,7 +41,8 @@ class BookingController extends Controller
     {
         $validated = $request->validate([
             'status' => 'required|in:pending,approved,rejected,cancelled',
-            'notes' => 'nullable|string|max:500',
+            'purpose' => 'nullable|string|max:500',
+            'special_requests' => 'nullable|string|max:500',
         ]);
 
         $booking->update($validated);
