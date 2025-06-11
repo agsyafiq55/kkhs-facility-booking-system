@@ -103,7 +103,7 @@
 
             <!-- Quick Action Buttons -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-zinc-700 col-span-1">
+                <div class="bg-neutral-50 dark:bg-zinc-900 p-6 rounded-lg shadow-sm col-span-1">
                     <flux:heading size="lg">Quick Actions</flux:heading>
                     <div class="mt-4 space-y-3">
                         <flux:button variant="primary" href="{{ route('admin.facilities.index') }}" class="w-full">
@@ -122,7 +122,7 @@
                 </div>
                 
                 <!-- Today's Bookings -->
-                <div class="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-zinc-700 col-span-1 md:col-span-3">
+                <div class="bg-neutral-50 dark:bg-zinc-900 p-6 rounded-lg shadow-sm col-span-1 md:col-span-3">
                     <div class="flex justify-between items-center mb-4">
                         <flux:heading size="lg">Today's Bookings</flux:heading>
                         <flux:button variant="ghost" href="{{ route('admin.bookings.index') }}">View All</flux:button>
@@ -188,7 +188,7 @@
             <!-- Bottom Row -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Recent Bookings -->
-                <div class="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-zinc-700">
+                <div class="bg-neutral-50 dark:bg-zinc-900 p-6 rounded-lg shadow-sm">
                     <div class="flex justify-between items-center mb-4">
                         <flux:heading size="lg">Recent Bookings</flux:heading>
                     </div>
@@ -231,7 +231,7 @@
                 </div>
 
                 <!-- Facility Status -->
-                <div class="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-zinc-700">
+                <div class="bg-neutral-50 dark:bg-zinc-900 p-6 rounded-lg shadow-sm">
                     <div class="flex justify-between items-center mb-4">
                         <flux:heading size="lg">Facility Status</flux:heading>
                     </div>
